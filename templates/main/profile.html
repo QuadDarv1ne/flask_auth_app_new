@@ -35,7 +35,7 @@
                         <label for="username">
                             <i class="fas fa-user"></i> {{ profile_form.username.label.text }}
                         </label>
-                        {{ profile_form.username(class="form-control") }}
+                        {{ profile_form.username(class="form-control", **{'data-tooltip': 'Уникальное имя пользователя для входа в систему', 'data-tooltip-position': 'top'}) }}
                         {% if profile_form.username.errors %}
                             <div class="form-errors">
                                 {% for error in profile_form.username.errors %}
@@ -92,7 +92,7 @@
                         <label for="current_password">
                             <i class="fas fa-lock"></i> {{ password_form.current_password.label.text }}
                         </label>
-                        {{ password_form.current_password(class="form-control") }}
+                        {{ password_form.current_password(class="form-control", **{'data-tooltip': 'Введите ваш текущий пароль для подтверждения изменений', 'data-tooltip-position': 'top'}) }}
                         {% if password_form.current_password.errors %}
                             <div class="form-errors">
                                 {% for error in password_form.current_password.errors %}
@@ -106,7 +106,7 @@
                         <label for="new_password">
                             <i class="fas fa-lock"></i> {{ password_form.new_password.label.text }}
                         </label>
-                        {{ password_form.new_password(class="form-control", id="new_password") }}
+                        {{ password_form.new_password(class="form-control", id="new_password", **{'data-tooltip': 'Пароль должен содержать минимум 8 символов, включая заглавные и строчные буквы, цифры', 'data-tooltip-position': 'top'}) }}
                         <div class="password-strength-meter">
                             <div class="strength-bar">
                                 <div class="strength-fill" id="new-password-strength-fill"></div>
@@ -126,7 +126,7 @@
                         <label for="confirm_password">
                             <i class="fas fa-lock"></i> {{ password_form.confirm_password.label.text }}
                         </label>
-                        {{ password_form.confirm_password(class="form-control") }}
+                        {{ password_form.confirm_password(class="form-control", **{'data-tooltip': 'Повторите новый пароль для подтверждения', 'data-tooltip-position': 'top'}) }}
                         {% if password_form.confirm_password.errors %}
                             <div class="form-errors">
                                 {% for error in password_form.confirm_password.errors %}

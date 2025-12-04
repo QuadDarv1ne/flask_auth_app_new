@@ -350,6 +350,45 @@ function validateField(field) {
     return true;
 }
 
+// ===== TOAST NOTIFICATIONS =====
+function showToast(message, type = 'info') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    // Add icon based on type
+    const icon = document.createElement('i');
+    icon.className = `fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}`;
+    
+    // Add message
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;
+    
+    // Add elements to toast
+    toast.appendChild(icon);
+    toast.appendChild(messageSpan);
+    
+    // Add toast to container
+    toastContainer.appendChild(toast);
+    
+    // Remove toast after animation completes
+    setTimeout(() => {
+        toast.remove();
+        // Remove container if empty
+        if (toastContainer.children.length === 0) {
+            toastContainer.remove();
+        }
+    }, 3000);
+}
+
 // Initialize tooltips and enhanced validation when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
