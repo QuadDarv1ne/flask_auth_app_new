@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from models import User
 from validators import PasswordStrength, NoCommonPasswords, UsernameValidator
@@ -109,3 +109,28 @@ class ChangePasswordForm(FlaskForm):
                                         EqualTo('new_password', message='Пароли должны совпадать')
                                     ])
     submit = SubmitField('Изменить пароль')
+
+class ContactForm(FlaskForm):
+    """Форма обратной связи"""
+    
+    name = StringField('Имя', 
+                      validators=[
+                          DataRequired(message='Введите ваше имя'),
+                          Length(min=2, max=100, message='Имя должно быть от 2 до 100 символов')
+                      ])
+    email = StringField('Email', 
+                       validators=[
+                           DataRequired(message='Введите email'),
+                           Email(message='Введите корректный email адрес')
+                       ])
+    subject = StringField('Тема', 
+                         validators=[
+                             DataRequired(message='Введите тему сообщения'),
+                             Length(min=5, max=200, message='Тема должна быть от 5 до 200 символов')
+                         ])
+    message = TextAreaField('Сообщение', 
+                           validators=[
+                               DataRequired(message='Введите текст сообщения'),
+                               Length(min=10, max=2000, message='Сообщение должно быть от 10 до 2000 символов')
+                           ])
+    submit = SubmitField('Отправить сообщение')

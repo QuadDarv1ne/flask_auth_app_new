@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
-from forms import UpdateProfileForm, ChangePasswordForm
+from forms import UpdateProfileForm, ChangePasswordForm, ContactForm
 from utils.logging import log_user_action
 
 main_bp = Blueprint('main', __name__)
@@ -81,3 +81,28 @@ def change_password():
             flash(f'{getattr(password_form, field).label.text}: {error}', 'error')
     
     return redirect(url_for('main.profile'))
+
+@main_bp.route('/about')
+def about():
+    """Страница О нас"""
+    return render_template('main/about.html', title='О нас')
+
+@main_bp.route('/contact', methods=['GET', 'POST'])
+def contact():
+    """Страница контактов"""
+    form = ContactForm()
+    
+    if form.validate_on_submit():
+        # Здесь можно добавить отправку email
+        # или сохранение сообщения в БД
+        
+        log_user_action(
+            form.email.data,
+            'contact_form_submitted',
+            f'Subject: {form.subject.data}'
+        )
+        
+        flash('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.', 'success')
+        return redirect(url_for('main.contact'))
+    
+    return render_template('main/contact.html', title='Контакты', form=form)

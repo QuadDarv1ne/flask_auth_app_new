@@ -18,6 +18,8 @@
             </div>
             <ul class="nav-menu">
                 <li><a href="{{ url_for('main.index') }}">Главная</a></li>
+                <li><a href="{{ url_for('main.about') }}">О нас</a></li>
+                <li><a href="{{ url_for('main.contact') }}">Контакты</a></li>
                 {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('main.dashboard') }}">Личный кабинет</a></li>
                     <li><a href="{{ url_for('main.profile') }}">Профиль</a></li>

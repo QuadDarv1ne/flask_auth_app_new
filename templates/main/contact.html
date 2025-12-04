@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Контакты - Flask Auth App{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-modern">
+    <div class="hero-background">
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="hero-content-modern" style="grid-template-columns: 1fr; text-align: center;">
+            <div class="hero-text">
+                <span class="hero-badge">
+                    <i class="fas fa-envelope"></i> Свяжитесь с нами
+                </span>
+                <h1 class="hero-title-modern">
+                    Мы всегда<br>
+                    <span class="gradient-text">на связи</span>
+                </h1>
+                <p class="hero-description" style="max-width: 700px; margin: 0 auto 2rem;">
+                    Есть вопросы? Предложения? Или просто хотите поздороваться? 
+                    Мы будем рады услышать вас!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Methods Section -->
+<section class="features-modern">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Способы связи</span>
+            <h2 class="section-title-modern">Выберите удобный способ</h2>
+        </div>
+        
+        <div class="features-grid-modern">
+            <div class="feature-card-modern">
+                <div class="feature-icon-modern">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3 class="feature-title-modern">Email</h3>
+                <p class="feature-description-modern">
+                    Напишите нам на почту
+                </p>
+                <a href="mailto:support@flaskauth.com" style="color: #667eea; font-weight: 600; text-decoration: none;">
+                    support@flaskauth.com
+                </a>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon-modern">
+                    <i class="fab fa-github"></i>
+                </div>
+                <h3 class="feature-title-modern">GitHub</h3>
+                <p class="feature-description-modern">
+                    Откройте issue или создайте PR
+                </p>
+                <a href="https://github.com" target="_blank" style="color: #667eea; font-weight: 600; text-decoration: none;">
+                    github.com/flask-auth
+                </a>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon-modern">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <h3 class="feature-title-modern">Сообщество</h3>
+                <p class="feature-description-modern">
+                    Присоединяйтесь к обсуждениям
+                </p>
+                <a href="#" style="color: #667eea; font-weight: 600; text-decoration: none;">
+                    Форум сообщества
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section class="how-it-works">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Обратная связь</span>
+            <h2 class="section-title-modern">Отправьте нам сообщение</h2>
+            <p class="section-description">
+                Заполните форму ниже, и мы свяжемся с вами в ближайшее время
+            </p>
+        </div>
+        
+        <div style="max-width: 700px; margin: 0 auto;">
+            <div class="auth-card" style="box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);">
+                <form method="POST" action="{{ url_for('main.contact') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-group">
+                        <label for="name">
+                            <i class="fas fa-user"></i> Ваше имя
+                        </label>
+                        {{ form.name(class="form-control", placeholder="Иван Иванов") }}
+                        {% if form.name.errors %}
+                            <div class="form-errors">
+                                {% for error in form.name.errors %}
+                                    <span class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        {{ form.email(class="form-control", type="email", placeholder="ivan@example.com") }}
+                        {% if form.email.errors %}
+                            <div class="form-errors">
+                                {% for error in form.email.errors %}
+                                    <span class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">
+                            <i class="fas fa-tag"></i> Тема
+                        </label>
+                        {{ form.subject(class="form-control", placeholder="Вопрос по интеграции") }}
+                        {% if form.subject.errors %}
+                            <div class="form-errors">
+                                {% for error in form.subject.errors %}
+                                    <span class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">
+                            <i class="fas fa-comment"></i> Сообщение
+                        </label>
+                        {{ form.message(class="form-control", rows=6, placeholder="Расскажите подробнее...") }}
+                        {% if form.message.errors %}
+                            <div class="form-errors">
+                                {% for error in form.message.errors %}
+                                    <span class="error-message">
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {{ form.submit(class="btn btn-primary btn-block") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Частые вопросы</span>
+            <h2 class="section-title-modern">Возможно ответ уже есть</h2>
+        </div>
+        
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>Как быстро вы отвечаете?</h3>
+                </div>
+                <p class="faq-answer">
+                    Мы стараемся отвечать на все запросы в течение 24 часов 
+                    в рабочие дни.
+                </p>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>Предоставляете ли вы техподдержку?</h3>
+                </div>
+                <p class="faq-answer">
+                    Да, мы предоставляем техническую поддержку через email 
+                    и GitHub Issues.
+                </p>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>Можно ли заказать доработку?</h3>
+                </div>
+                <p class="faq-answer">
+                    Конечно! Свяжитесь с нами, и мы обсудим ваши требования 
+                    и возможности реализации.
+                </p>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>Есть ли коммерческая поддержка?</h3>
+                </div>
+                <p class="faq-answer">
+                    Да, мы предлагаем коммерческую поддержку для корпоративных 
+                    клиентов. Напишите нам для деталей.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
