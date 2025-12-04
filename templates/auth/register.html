@@ -71,7 +71,13 @@
                     <label for="password">
                         <i class="fas fa-lock"></i> {{ form.password.label.text }}
                     </label>
-                    {{ form.password(class="form-control", placeholder="Минимум 8 символов") }}
+                    {{ form.password(class="form-control", placeholder="Минимум 8 символов", id="password") }}
+                    <div class="password-strength-meter">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <div class="strength-label" id="strength-label">Введите пароль</div>
+                    </div>
                     {% if form.password.errors %}
                         <div class="form-errors">
                             {% for error in form.password.errors %}

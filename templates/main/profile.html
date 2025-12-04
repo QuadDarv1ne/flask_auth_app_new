@@ -6,6 +6,15 @@
 <div class="profile-page">
     <div class="container">
         <div class="profile-header">
+            <div class="profile-avatar-container">
+                {% if user.get_avatar_url() %}
+                    <img src="{{ user.get_avatar_url() }}" alt="Аватар {{ user.username }}" class="profile-avatar-img">
+                {% else %}
+                    <div class="profile-avatar-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                {% endif %}
+            </div>
             <h1>
                 <i class="fas fa-user-circle"></i>
                 Профиль пользователя
@@ -19,7 +28,7 @@
                 <div class="card-header">
                     <h2><i class="fas fa-info-circle"></i> Основная информация</h2>
                 </div>
-                <form method="POST" action="{{ url_for('main.profile') }}" class="profile-form">
+                <form method="POST" action="{{ url_for('main.profile') }}" class="profile-form" enctype="multipart/form-data">
                     {{ profile_form.hidden_tag() }}
                     
                     <div class="form-group">
@@ -44,6 +53,21 @@
                         {% if profile_form.email.errors %}
                             <div class="form-errors">
                                 {% for error in profile_form.email.errors %}
+                                    <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="avatar">
+                            <i class="fas fa-image"></i> {{ profile_form.avatar.label.text }}
+                        </label>
+                        {{ profile_form.avatar(class="form-control-file") }}
+                        <small class="form-text">Поддерживаемые форматы: JPG, PNG, GIF. Максимальный размер: 5MB</small>
+                        {% if profile_form.avatar.errors %}
+                            <div class="form-errors">
+                                {% for error in profile_form.avatar.errors %}
                                     <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
                                 {% endfor %}
                             </div>
@@ -82,7 +106,13 @@
                         <label for="new_password">
                             <i class="fas fa-lock"></i> {{ password_form.new_password.label.text }}
                         </label>
-                        {{ password_form.new_password(class="form-control") }}
+                        {{ password_form.new_password(class="form-control", id="new_password") }}
+                        <div class="password-strength-meter">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="new-password-strength-fill"></div>
+                            </div>
+                            <div class="strength-label" id="new-password-strength-label">Введите пароль</div>
+                        </div>
                         {% if password_form.new_password.errors %}
                             <div class="form-errors">
                                 {% for error in password_form.new_password.errors %}

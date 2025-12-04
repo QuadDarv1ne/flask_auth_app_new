@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from models import User
@@ -69,6 +70,10 @@ class UpdateProfileForm(FlaskForm):
                            DataRequired(message='Введите email'),
                            Email(message='Введите корректный email адрес')
                        ])
+    avatar = FileField('Аватар', 
+                      validators=[
+                          FileAllowed(['jpg', 'png', 'jpeg', 'gif'], 'Только изображения!')
+                      ])
     submit = SubmitField('Сохранить изменения')
     
     def __init__(self, original_username, original_email, *args, **kwargs):

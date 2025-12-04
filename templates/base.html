@@ -28,6 +28,11 @@
                     <li><a href="{{ url_for('auth.login') }}" class="btn-login">Войти</a></li>
                     <li><a href="{{ url_for('auth.register') }}" class="btn-register">Регистрация</a></li>
                 {% endif %}
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -68,6 +73,241 @@
                 setTimeout(() => alert.remove(), 300);
             });
         }, 5000);
+
+        // Dark mode toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // Check for saved theme preference or respect OS preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            // Set initial theme
+            if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
+                document.body.classList.add('dark-mode');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+            
+            // Toggle theme on button click
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        });
+
+        // Real-time form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validate username
+            const usernameInput = document.querySelector('input[name="username"]');
+            if (usernameInput) {
+                usernameInput.addEventListener('input', function() {
+                    const username = this.value;
+                    const errorContainer = this.parentNode.querySelector('.form-errors') || 
+                                         createErrorContainer(this.parentNode);
+                    
+                    // Clear previous errors
+                    errorContainer.innerHTML = '';
+                    
+                    // Validation rules
+                    if (username.length > 0 && username.length < 3) {
+                        showError(errorContainer, 'Имя пользователя должно содержать минимум 3 символа');
+                    } else if (username.length > 80) {
+                        showError(errorContainer, 'Имя пользователя не должно превышать 80 символов');
+                    } else if (username.length > 0 && !/^[a-zA-Z0-9_-]+$/.test(username)) {
+                        showError(errorContainer, 'Имя пользователя может содержать только буквы, цифры, подчеркивание и дефис');
+                    }
+                });
+            }
+            
+            // Validate email
+            const emailInput = document.querySelector('input[name="email"]');
+            if (emailInput) {
+                emailInput.addEventListener('input', function() {
+                    const email = this.value;
+                    const errorContainer = this.parentNode.querySelector('.form-errors') || 
+                                         createErrorContainer(this.parentNode);
+                    
+                    // Clear previous errors
+                    errorContainer.innerHTML = '';
+                    
+                    // Validation rules
+                    if (email.length > 0 && !isValidEmail(email)) {
+                        showError(errorContainer, 'Введите корректный email адрес');
+                    }
+                });
+            }
+            
+            // Validate password
+            const passwordInput = document.querySelector('input[name="password"]');
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    const errorContainer = this.parentNode.querySelector('.form-errors') || 
+                                         createErrorContainer(this.parentNode);
+                    
+                    // Clear previous errors
+                    errorContainer.innerHTML = '';
+                    
+                    // Validation rules
+                    if (password.length > 0 && password.length < 8) {
+                        showError(errorContainer, 'Пароль должен содержать минимум 8 символов');
+                    } else if (password.length > 0) {
+                        const errors = [];
+                        if (!/[A-Z]/.test(password)) {
+                            errors.push('одну заглавную букву');
+                        }
+                        if (!/[a-z]/.test(password)) {
+                            errors.push('одну строчную букву');
+                        }
+                        if (!/\d/.test(password)) {
+                            errors.push('одну цифру');
+                        }
+                        
+                        if (errors.length > 0) {
+                            showError(errorContainer, `Пароль должен содержать как минимум ${errors.join(', ')}`);
+                        }
+                    }
+                    
+                    // Update password strength meter
+                    updatePasswordStrength(password, 'strength-fill', 'strength-label');
+                });
+            }
+            
+            // Validate new password in change password form
+            const newPasswordInput = document.querySelector('input[name="new_password"]');
+            if (newPasswordInput) {
+                newPasswordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    const errorContainer = this.parentNode.querySelector('.form-errors') || 
+                                         createErrorContainer(this.parentNode);
+                    
+                    // Clear previous errors
+                    errorContainer.innerHTML = '';
+                    
+                    // Validation rules
+                    if (password.length > 0 && password.length < 8) {
+                        showError(errorContainer, 'Пароль должен содержать минимум 8 символов');
+                    } else if (password.length > 0) {
+                        const errors = [];
+                        if (!/[A-Z]/.test(password)) {
+                            errors.push('одну заглавную букву');
+                        }
+                        if (!/[a-z]/.test(password)) {
+                            errors.push('одну строчную букву');
+                        }
+                        if (!/\d/.test(password)) {
+                            errors.push('одну цифру');
+                        }
+                        
+                        if (errors.length > 0) {
+                            showError(errorContainer, `Пароль должен содержать как минимум ${errors.join(', ')}`);
+                        }
+                    }
+                    
+                    // Update password strength meter
+                    updatePasswordStrength(password, 'new-password-strength-fill', 'new-password-strength-label');
+                });
+            }
+            
+            // Validate password confirmation
+            const password2Input = document.querySelector('input[name="password2"]');
+            if (password2Input) {
+                password2Input.addEventListener('input', function() {
+                    const password2 = this.value;
+                    const password = document.querySelector('input[name="password"]').value;
+                    const errorContainer = this.parentNode.querySelector('.form-errors') || 
+                                         createErrorContainer(this.parentNode);
+                    
+                    // Clear previous errors
+                    errorContainer.innerHTML = '';
+                    
+                    // Validation rules
+                    if (password2.length > 0 && password2 !== password) {
+                        showError(errorContainer, 'Пароли должны совпадать');
+                    }
+                });
+            }
+            
+            // Helper functions
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+            
+            function showError(container, message) {
+                const errorElement = document.createElement('span');
+                errorElement.className = 'error-message';
+                errorElement.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + message;
+                container.appendChild(errorElement);
+            }
+            
+            function createErrorContainer(parent) {
+                const container = document.createElement('div');
+                container.className = 'form-errors';
+                parent.appendChild(container);
+                return container;
+            }
+            
+            // Password strength meter
+            function updatePasswordStrength(password, fillId, labelId) {
+                const strengthFill = document.getElementById(fillId);
+                const strengthLabel = document.getElementById(labelId);
+                
+                if (!strengthFill || !strengthLabel) return;
+                
+                // Reset classes
+                strengthFill.className = 'strength-fill';
+                strengthLabel.className = 'strength-label';
+                
+                if (password.length === 0) {
+                    strengthLabel.textContent = 'Введите пароль';
+                    strengthFill.style.width = '0%';
+                    return;
+                }
+                
+                let strength = 0;
+                let label = '';
+                
+                // Length check
+                if (password.length >= 8) strength += 1;
+                if (password.length >= 12) strength += 1;
+                
+                // Character variety checks
+                if (/[a-z]/.test(password)) strength += 1;
+                if (/[A-Z]/.test(password)) strength += 1;
+                if (/\d/.test(password)) strength += 1;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+                
+                // Determine strength level
+                if (strength <= 2) {
+                    strengthFill.classList.add('strength-weak');
+                    strengthLabel.classList.add('label-weak');
+                    label = 'Слабый пароль';
+                } else if (strength <= 4) {
+                    strengthFill.classList.add('strength-medium');
+                    strengthLabel.classList.add('label-medium');
+                    label = 'Средний пароль';
+                } else if (strength <= 5) {
+                    strengthFill.classList.add('strength-strong');
+                    strengthLabel.classList.add('label-strong');
+                    label = 'Сильный пароль';
+                } else {
+                    strengthFill.classList.add('strength-very-strong');
+                    strengthLabel.classList.add('label-very-strong');
+                    label = 'Очень сильный пароль';
+                }
+                
+                strengthLabel.textContent = label;
+            }
+        });
     </script>
 </body>
 </html>

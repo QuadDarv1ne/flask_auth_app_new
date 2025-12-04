@@ -18,6 +18,8 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     email_confirm_token = db.Column(db.String(100), unique=True, nullable=True)
+    # Avatar field
+    avatar_filename = db.Column(db.String(255), nullable=True)
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -46,6 +48,17 @@ class User(UserMixin, db.Model):
         self.email_confirmed = True
         self.email_confirm_token = None
         db.session.commit()
+    
+    def set_avatar(self, filename):
+        """Установка аватара пользователя"""
+        self.avatar_filename = filename
+        db.session.commit()
+    
+    def get_avatar_url(self):
+        """Получение URL аватара пользователя"""
+        if self.avatar_filename:
+            return f"/static/uploads/avatars/{self.avatar_filename}"
+        return None
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
 from app import db
 from forms import UpdateProfileForm, ChangePasswordForm, ContactForm
 from utils.logging import log_user_action
+import os
+from werkzeug.utils import secure_filename
 
 main_bp = Blueprint('main', __name__)
 
@@ -25,10 +27,31 @@ def profile():
     password_form = ChangePasswordForm()
     
     # Handle profile form submission (when accessed via GET or POST but not from password form)
-    if request.endpoint == 'main.profile' and profile_form.validate_on_submit():
+    if request.method == 'POST' and 'submit' in request.form and profile_form.validate_on_submit():
         old_username = current_user.username
         current_user.username = profile_form.username.data
         current_user.email = profile_form.email.data
+        
+        # Handle avatar upload
+        if profile_form.avatar.data:
+            avatar_file = profile_form.avatar.data
+            filename = secure_filename(avatar_file.filename)
+            if filename:
+                # Create avatars directory if it doesn't exist
+                avatar_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'avatars')
+                os.makedirs(avatar_dir, exist_ok=True)
+                
+                # Generate unique filename
+                name, ext = os.path.splitext(filename)
+                unique_filename = f"{current_user.id}_{secure_filename(name)}{ext}"
+                filepath = os.path.join(avatar_dir, unique_filename)
+                
+                # Save the file
+                avatar_file.save(filepath)
+                
+                # Update user's avatar filename
+                current_user.set_avatar(unique_filename)
+        
         db.session.commit()
         
         log_user_action(

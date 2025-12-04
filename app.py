@@ -8,6 +8,7 @@ from config import Config
 from utils.logging import setup_logging
 from utils.email import mail
 from utils.metrics import metrics_endpoint, record_request_metrics
+import os
 import time
 
 # Инициализация расширений
@@ -23,6 +24,14 @@ def create_app(config_class=Config):
     """Фабрика приложения Flask"""
     app = Flask(__name__)
     app.config.from_object(config_class)
+    
+    # Установка максимального размера загружаемых файлов (5MB)
+    app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+    
+    # Создание директории для загрузок
+    upload_folder = os.path.join(app.root_path, 'static', 'uploads')
+    os.makedirs(upload_folder, exist_ok=True)
+    app.config['UPLOAD_FOLDER'] = upload_folder
     
     # Инициализация расширений с приложением
     db.init_app(app)
@@ -92,6 +101,12 @@ def create_app(config_class=Config):
     def forbidden_error(error):
         app.logger.warning(f'403 error: {error}')
         return render_template('errors/403.html'), 403
+    
+    # Обработчик ошибок загрузки файлов
+    @app.errorhandler(413)
+    def too_large(e):
+        app.logger.warning(f'File too large error: {e}')
+        return render_template('errors/413.html', title='Файл слишком большой'), 413
     
     # Создание таблиц базы данных
     with app.app_context():
