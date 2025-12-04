@@ -92,9 +92,17 @@ def login():
             flash('Вы успешно вошли в систему!', 'success')
             return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))
         else:
-            # Увеличение счетчика неудачных попыток входа
+            # Логируем неудачную попытку входа
             increment_failed_logins()
-            flash('Неверный email или пароль.', 'danger')
+            detect_suspicious_activity('failed_login', f'Failed login attempt for email: {form.email.data}')
+            flash('Неверный email или пароль.', 'error')
+            
+            # Regular login without 2FA
+            login_user(user, remember=form.remember_me.data)
+            user.update_last_login()
+            next_page = request.args.get('next')
+            flash('Вы успешно вошли в систему!', 'success')
+            return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))
     
     return render_template('auth/login.html', form=form)
 

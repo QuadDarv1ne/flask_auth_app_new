@@ -112,26 +112,48 @@ def create_app(config_class=Config):
         return {'status': 'healthy', 'timestamp': time.time()}, 200
     
     # Обработчики ошибок
+    @app.errorhandler(400)
+    def bad_request(error):
+        app.logger.warning(f'400 error: {error}')
+        return render_template('errors/400.html', title='Некорректный запрос'), 400
+    
+    @app.errorhandler(401)
+    def unauthorized(error):
+        app.logger.warning(f'401 error: {error}')
+        flash('Пожалуйста, войдите в систему для доступа к этой странице.', 'warning')
+        return redirect(url_for('auth.login')), 401
+    
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        app.logger.warning(f'403 error: {error}')
+        return render_template('errors/403.html', title='Доступ запрещен'), 403
+    
     @app.errorhandler(404)
     def not_found_error(error):
         app.logger.warning(f'404 error: {error}')
-        return render_template('errors/404.html'), 404
+        return render_template('errors/404.html', title='Страница не найдена'), 404
+    
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        app.logger.warning(f'405 error: {error}')
+        return render_template('errors/405.html', title='Метод не разрешен'), 405
+    
+    @app.errorhandler(429)
+    def too_many_requests(error):
+        app.logger.warning(f'429 error: {error}')
+        return render_template('errors/429.html', title='Слишком много запросов'), 429
     
     @app.errorhandler(500)
     def internal_error(error):
         db.session.rollback()
         app.logger.error(f'500 error: {error}')
-        return render_template('errors/500.html'), 500
-    
-    @app.errorhandler(403)
-    def forbidden_error(error):
-        app.logger.warning(f'403 error: {error}')
-        return render_template('errors/403.html'), 403
+        return render_template('errors/500.html', title='Внутренняя ошибка сервера'), 500
     
     # Обработчик ошибок загрузки файлов
     @app.errorhandler(413)
     def too_large(e):
         app.logger.warning(f'File too large error: {e}')
+        flash('Файл слишком большой. Максимальный размер файла 16MB.', 'error')
         return render_template('errors/413.html', title='Файл слишком большой'), 413
     
     # Создание таблиц базы данных

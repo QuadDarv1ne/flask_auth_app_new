@@ -27,8 +27,10 @@ def dashboard():
 
 @main_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("10 per minute")  # Ограничиваем частоту обновления профиля
 def profile():
     """Страница профиля пользователя"""
+    detect_suspicious_activity('profile_access')
     profile_form = UpdateProfileForm(current_user.username, current_user.email)
     password_form = ChangePasswordForm()
     twofa_form = TwoFactorSetupForm()
