@@ -478,6 +478,7 @@ body.dark-mode .close-btn:hover {
 body.dark-mode .form-container {
     background: var(--dark-card-bg);
     box-shadow: var(--dark-shadow-md);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     border: 1px solid var(--dark-border-color);
     animation: fadeIn 0.5s ease;
