@@ -262,13 +262,4 @@ statNumbers.forEach(stat => {
     statsObserver.observe(stat);
 });
 
-// Автоматическое закрытие flash сообщений через 5 секунд
-setTimeout(() => {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        alert.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => alert.remove(), 300);
-    });
-}, 5000);
-
 console.log('Flask Auth App - Enhanced UI Loaded ✨');
