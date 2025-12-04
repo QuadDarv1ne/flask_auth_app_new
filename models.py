@@ -2,6 +2,9 @@ from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db, login_manager
+import pyotp
+import base64
+import os
 
 class User(UserMixin, db.Model):
     """Модель пользователя для системы аутентификации"""
@@ -20,6 +23,9 @@ class User(UserMixin, db.Model):
     email_confirm_token = db.Column(db.String(100), unique=True, nullable=True)
     # Avatar field
     avatar_filename = db.Column(db.String(255), nullable=True)
+    # 2FA fields
+    totp_secret = db.Column(db.String(32), nullable=True)
+    is_2fa_enabled = db.Column(db.Boolean, default=False, nullable=False)
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -59,6 +65,35 @@ class User(UserMixin, db.Model):
         if self.avatar_filename:
             return f"/static/uploads/avatars/{self.avatar_filename}"
         return None
+    
+    def enable_2fa(self):
+        """Включение двухфакторной аутентификации"""
+        if not self.totp_secret:
+            # Generate a random secret for TOTP
+            self.totp_secret = base64.b32encode(os.urandom(20)).decode('utf-8')
+        self.is_2fa_enabled = True
+        db.session.commit()
+        return self.totp_secret
+    
+    def disable_2fa(self):
+        """Отключение двухфакторной аутентификации"""
+        self.totp_secret = None
+        self.is_2fa_enabled = False
+        db.session.commit()
+    
+    def verify_totp(self, token):
+        """Проверка TOTP токена"""
+        if not self.totp_secret or not self.is_2fa_enabled:
+            return False
+        totp = pyotp.TOTP(self.totp_secret)
+        return totp.verify(token, valid_window=1)
+    
+    def get_totp_uri(self):
+        """Получение URI для настройки 2FA в приложении"""
+        if not self.totp_secret:
+            return None
+        totp = pyotp.TOTP(self.totp_secret)
+        return totp.provisioning_uri(self.username, issuer_name="Flask Auth App")
 
 @login_manager.user_loader
 def load_user(user_id):
