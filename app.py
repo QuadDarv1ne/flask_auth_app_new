@@ -1,12 +1,15 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_mail import Mail
 from config import Config
 from utils.logging import setup_logging
+from utils.email import mail
 
 # Инициализация расширений
 db = SQLAlchemy()
 login_manager = LoginManager()
+mail = Mail()
 
 def create_app(config_class=Config):
     """Фабрика приложения Flask"""
@@ -16,6 +19,7 @@ def create_app(config_class=Config):
     # Инициализация расширений с приложением
     db.init_app(app)
     login_manager.init_app(app)
+    mail.init_app(app)
     
     # Настройка логирования
     setup_logging(app)

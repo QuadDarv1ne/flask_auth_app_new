@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Добро пожаловать - Flask Auth App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4a6fa5;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Flask Auth App</h1>
+        <p>Добро пожаловать!</p>
+    </div>
+    
+    <div class="content">
+        <h2>Здравствуйте, {{ user.username }}!</h2>
+        
+        <p>Спасибо за регистрацию в Flask Auth App. Мы рады приветствовать вас в нашем сообществе!</p>
+        
+        <p>Теперь вы можете войти в систему и начать использовать все возможности нашего приложения:</p>
+        
+        <ul>
+            <li>🔒 Безопасная аутентификация</li>
+            <li>📱 Адаптивный дизайн для всех устройств</li>
+            <li>⚙️ Современный пользовательский интерфейс</li>
+            <li>🛡️ Надежная защита ваших данных</li>
+        </ul>
+        
+        <div style="text-align: center;">
+            <a href="{{ url_for('auth.login', _external=True) }}" class="button">Войти в систему</a>
+        </div>
+        
+        <p>Если у вас возникнут какие-либо вопросы, не стесняйтесь обращаться к нашей службе поддержки.</p>
+    </div>
+    
+    <div class="footer">
+        <p>С уважением,<br>Команда Flask Auth App</p>
+        <p><small>Это автоматическое сообщение, пожалуйста, не отвечайте на него.</small></p>
+    </div>
+</body>
+</html>
