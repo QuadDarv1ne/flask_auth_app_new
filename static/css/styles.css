@@ -132,6 +132,8 @@ body.dark-mode .theme-toggle:hover {
 body.dark-mode .navbar {
     background: var(--dark-card-bg);
     box-shadow: var(--dark-shadow-sm);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--dark-border-color);
 }
 
 .navbar .container {
@@ -379,6 +381,9 @@ body.dark-mode .close-btn:hover {
 body.dark-mode .form-container {
     background: var(--dark-card-bg);
     box-shadow: var(--dark-shadow-md);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--dark-border-color);
+    animation: fadeIn 0.5s ease;
 }
 
 .form-group {
