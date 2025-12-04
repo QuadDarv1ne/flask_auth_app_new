@@ -421,6 +421,14 @@ body.dark-mode .form-control {
     background: var(--dark-card-bg);
     border-color: var(--dark-border-color);
     color: var(--dark-text-primary);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+body.dark-mode .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+    outline: none;
 }
 
 .form-control:focus {
