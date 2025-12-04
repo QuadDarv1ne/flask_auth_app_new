@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Flask Auth App{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <h1>Вход в систему</h1>
+                <p>Введите ваши учетные данные</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i> {{ form.username.label.text }}
+                    </label>
+                    {{ form.username(class="form-control", placeholder="Введите имя пользователя") }}
+                    {% if form.username.errors %}
+                        <div class="form-errors">
+                            {% for error in form.username.errors %}
+                                <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> {{ form.password.label.text }}
+                    </label>
+                    {{ form.password(class="form-control", placeholder="Введите пароль") }}
+                    {% if form.password.errors %}
+                        <div class="form-errors">
+                            {% for error in form.password.errors %}
+                                <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group checkbox-group">
+                    {{ form.remember_me(class="form-checkbox") }}
+                    {{ form.remember_me.label }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary btn-block") }}
+                </div>
+
+                <div class="auth-footer">
+                    <p>Нет аккаунта? <a href="{{ url_for('auth.register') }}">Зарегистрируйтесь</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

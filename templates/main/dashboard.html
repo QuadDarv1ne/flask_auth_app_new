@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Flask Auth App{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>
+                <i class="fas fa-tachometer-alt"></i>
+                Личный кабинет
+            </h1>
+            <p class="subtitle">Добро пожаловать в вашу панель управления</p>
+        </div>
+
+        <div class="user-info-card">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+                <h2>{{ user.username }}</h2>
+                <div class="user-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ user.email }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Регистрация: {{ user.created_at.strftime('%d.%m.%Y') }}</span>
+                    </div>
+                    {% if user.last_login %}
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Последний вход: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Статус аккаунта</h3>
+                    <p class="stat-value active">Активен</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-id-badge"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>ID пользователя</h3>
+                    <p class="stat-value">#{{ user.id }}</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Безопасность</h3>
+                    <p class="stat-value secure">Защищен</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> На главную
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

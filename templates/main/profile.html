@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Flask Auth App{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="container">
+        <div class="profile-header">
+            <h1>
+                <i class="fas fa-user-circle"></i>
+                Профиль пользователя
+            </h1>
+            <p class="subtitle">Управляйте вашими данными и настройками</p>
+        </div>
+
+        <div class="profile-grid">
+            <!-- Информация о пользователе -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-info-circle"></i> Основная информация</h2>
+                </div>
+                <form method="POST" action="{{ url_for('main.profile') }}" class="profile-form">
+                    {{ profile_form.hidden_tag() }}
+                    
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i> {{ profile_form.username.label.text }}
+                        </label>
+                        {{ profile_form.username(class="form-control") }}
+                        {% if profile_form.username.errors %}
+                            <div class="form-errors">
+                                {% for error in profile_form.username.errors %}
+                                    <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> {{ profile_form.email.label.text }}
+                        </label>
+                        {{ profile_form.email(class="form-control", type="email") }}
+                        {% if profile_form.email.errors %}
+                            <div class="form-errors">
+                                {% for error in profile_form.email.errors %}
+                                    <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ profile_form.submit(class="btn btn-primary btn-block") }}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Смена пароля -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-key"></i> Изменить пароль</h2>
+                </div>
+                <form method="POST" action="{{ url_for('main.change_password') }}" class="profile-form">
+                    {{ password_form.hidden_tag() }}
+                    
+                    <div class="form-group">
+                        <label for="current_password">
+                            <i class="fas fa-lock"></i> {{ password_form.current_password.label.text }}
+                        </label>
+                        {{ password_form.current_password(class="form-control") }}
+                        {% if password_form.current_password.errors %}
+                            <div class="form-errors">
+                                {% for error in password_form.current_password.errors %}
+                                    <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_password">
+                            <i class="fas fa-lock"></i> {{ password_form.new_password.label.text }}
+                        </label>
+                        {{ password_form.new_password(class="form-control") }}
+                        {% if password_form.new_password.errors %}
+                            <div class="form-errors">
+                                {% for error in password_form.new_password.errors %}
+                                    <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">
+                            <i class="fas fa-lock"></i> {{ password_form.confirm_password.label.text }}
+                        </label>
+                        {{ password_form.confirm_password(class="form-control") }}
+                        {% if password_form.confirm_password.errors %}
+                            <div class="form-errors">
+                                {% for error in password_form.confirm_password.errors %}
+                                    <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ password_form.submit(class="btn btn-danger btn-block") }}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Статистика аккаунта -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-line"></i> Статистика аккаунта</h2>
+                </div>
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <i class="fas fa-calendar-plus"></i> Дата регистрации
+                        </div>
+                        <div class="stat-value">
+                            {{ user.created_at.strftime('%d.%m.%Y') }}
+                        </div>
+                    </div>
+                    
+                    {% if user.last_login %}
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <i class="fas fa-clock"></i> Последний вход
+                        </div>
+                        <div class="stat-value">
+                            {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <i class="fas fa-id-badge"></i> ID пользователя
+                        </div>
+                        <div class="stat-value">
+                            #{{ user.id }}
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <i class="fas fa-shield-alt"></i> Статус безопасности
+                        </div>
+                        <div class="stat-value secure-badge">
+                            <i class="fas fa-check-circle"></i> Защищен
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-tachometer-alt"></i> В личный кабинет
+            </a>
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> На главную
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Flask Auth App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{{ url_for('main.index') }}">
+                    <i class="fas fa-shield-alt"></i> Flask Auth
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('main.index') }}">Главная</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('main.dashboard') }}">Личный кабинет</a></li>
+                    <li><a href="{{ url_for('main.profile') }}">Профиль</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}" class="btn-logout">Выйти</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}" class="btn-login">Войти</a></li>
+                    <li><a href="{{ url_for('auth.register') }}" class="btn-register">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash сообщения -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                        {{ message }}
+                        <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Flask Auth App. Создано с <i class="fas fa-heart"></i> на Flask</p>
+        </div>
+    </footer>
+
+    <script>
+        // Автоматическое закрытие flash сообщений через 5 секунд
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
