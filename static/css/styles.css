@@ -2572,3 +2572,80 @@ body.dark-mode .card:hover {
         transform: translateY(0px);
     }
 }
+
+/* ===== UTILITY CLASSES ===== */
+/* Flexbox utilities */
+.flex {
+    display: flex;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-gap-1 {
+    gap: 1rem;
+}
+
+.flex-gap-2 {
+    gap: 2rem;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.mt-2 {
+    margin-top: 2rem;
+}
+
+/* Text utilities */
+.text-center {
+    text-align: center;
+}
+
+.text-small {
+    font-size: 0.9rem;
+}
+
+.opacity-80 {
+    opacity: 0.8;
+}
+
+/* Grid utilities */
+.grid-1fr {
+    grid-template-columns: 1fr;
+}
+
+/* Contact info card */
+.contact-info-card {
+    position: relative;
+    margin-top: 2rem;
+    background: rgba(255,255,255,0.2);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: 15px;
+}
+
+/* Error badge variant */
+.hero-badge-error {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* Contact form container */
+.contact-form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Features background */
+.bg-light-gray {
+    background: #f8fafc;
+}
+
+/* Button margin top */
+.btn-mt-1 {
+    margin-top: 1rem !important;
+}
