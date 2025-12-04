@@ -3,17 +3,39 @@
 {% block title %}{{ title }} - Flask Auth App{% endblock %}
 
 {% block content %}
-<div class="auth-page">
+<div class="hero-modern">
+    <div class="hero-background">
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+    
     <div class="container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <div class="auth-icon">
+        <div class="hero-content-modern" style="grid-template-columns: 1fr;">
+            <div class="hero-text" style="text-align: center;">
+                <div class="hero-badge">
                     <i class="fas fa-user-plus"></i>
+                    Регистрация
                 </div>
-                <h1>Регистрация</h1>
-                <p>Создайте новый аккаунт</p>
+                
+                <h1 class="hero-title-modern">
+                    <span class="gradient-text">Создайте</span> свой аккаунт<br>
+                    за пару минут
+                </h1>
+                
+                <p class="hero-description">
+                    Зарегистрируйтесь, чтобы получить доступ ко всем возможностям нашей системы
+                </p>
             </div>
+        </div>
+    </div>
+</div>
 
+<div class="features-modern">
+    <div class="container">
+        <div class="auth-card" style="max-width: 500px; margin: 0 auto;">
             <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form">
                 {{ form.hidden_tag() }}
                 
@@ -49,7 +71,7 @@
                     <label for="password">
                         <i class="fas fa-lock"></i> {{ form.password.label.text }}
                     </label>
-                    {{ form.password(class="form-control", placeholder="Минимум 6 символов") }}
+                    {{ form.password(class="form-control", placeholder="Минимум 8 символов") }}
                     {% if form.password.errors %}
                         <div class="form-errors">
                             {% for error in form.password.errors %}
@@ -74,13 +96,64 @@
                 </div>
 
                 <div class="form-group">
-                    {{ form.submit(class="btn btn-primary btn-block") }}
+                    {{ form.submit(class="btn-modern btn-primary-modern btn-block") }}
                 </div>
 
                 <div class="auth-footer">
                     <p>Уже есть аккаунт? <a href="{{ url_for('auth.login') }}">Войдите</a></p>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<div class="stats-section" style="background: #f8fafc;">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-badge">ПРЕИМУЩЕСТВА</div>
+            <h2 class="section-title-modern">Почему выбирают нас</h2>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">256-bit</div>
+                    <div class="stat-label">Шифрование данных</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Доступность</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-sync"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Синхронизация</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Поддержка</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
