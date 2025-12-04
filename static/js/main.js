@@ -1,81 +1,153 @@
 // ===== AUTO-HIDE FLASH MESSAGES =====
-document.addEventListener('DOMContentLoaded', function() {
-    const flashMessages = document.querySelectorAll('.alert');
+(function() {
+    'use strict';
     
-    flashMessages.forEach(function(message) {
-        // Auto hide after 5 seconds
-        setTimeout(function() {
-            message.style.animation = 'slideOut 0.3s ease-out forwards';
+    function initFlashMessages() {
+        const flashMessages = document.querySelectorAll('.alert');
+        
+        flashMessages.forEach(function(message) {
+            // Auto hide after 5 seconds
             setTimeout(function() {
-                message.remove();
-            }, 300);
-        }, 5000);
-    });
-});
-
-// ===== SMOOTH SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// ===== NAVBAR SCROLL EFFECT =====
-let lastScroll = 0;
-const navbar = document.querySelector('.navbar');
-
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-        navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                message.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(function() {
+                    message.remove();
+                }, 300);
+            }, 5000);
+        });
     }
     
-    lastScroll = currentScroll;
-});
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFlashMessages);
+    } else {
+        initFlashMessages();
+    }
+})();
+
+// ===== SMOOTH SCROLL =====
+(function() {
+    'use strict';
+    
+    function initSmoothScroll() {
+        // Use event delegation for better performance
+        document.addEventListener('click', function(e) {
+            const anchor = e.target.closest('a[href^="#"]');
+            if (anchor) {
+                e.preventDefault();
+                const targetId = anchor.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSmoothScroll);
+    } else {
+        initSmoothScroll();
+    }
+})();
+
+// ===== NAVBAR SCROLL EFFECT =====
+(function() {
+    'use strict';
+    
+    let lastScroll = 0;
+    let ticking = false;
+    const navbar = document.querySelector('.navbar');
+    
+    // Throttling function for scroll events
+    function updateNavbarEffect() {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > 100) {
+            navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+        } else {
+            navbar.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+        }
+        
+        lastScroll = currentScroll;
+        ticking = false;
+    }
+    
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateNavbarEffect);
+            ticking = true;
+        }
+    }
+    
+    window.addEventListener('scroll', requestTick);
+})();
 
 // ===== INTERSECTION OBSERVER FOR ANIMATIONS =====
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Animate elements on scroll
-document.addEventListener('DOMContentLoaded', () => {
-    const animateElements = document.querySelectorAll(
-        '.feature-card-modern, .step-card, .testimonial-card, .stat-item, .faq-item'
-    );
+(function() {
+    'use strict';
     
-    animateElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
+    // Check if IntersectionObserver is supported
+    if (!('IntersectionObserver' in window)) {
+        // Fallback for older browsers
+        document.addEventListener('DOMContentLoaded', () => {
+            const animateElements = document.querySelectorAll(
+                '.feature-card-modern, .step-card, .testimonial-card, .stat-item, .faq-item'
+            );
+            
+            animateElements.forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            });
+        });
+        return;
+    }
+    
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                // Stop observing after animation
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // Animate elements on scroll
+    document.addEventListener('DOMContentLoaded', () => {
+        const animateElements = document.querySelectorAll(
+            '.feature-card-modern, .step-card, .testimonial-card, .stat-item, .faq-item'
+        );
+        
+        animateElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
     });
-});
+})();
 
 // ===== FORM VALIDATION ENHANCEMENT =====
-const forms = document.querySelectorAll('form');
-forms.forEach(form => {
-    form.addEventListener('submit', function(e) {
+(function() {
+    'use strict';
+    
+    const forms = document.querySelectorAll('form');
+    
+    // Use event delegation for better performance
+    document.addEventListener('submit', function(e) {
+        const form = e.target.closest('form');
+        if (!form || !forms.includes(form)) return;
+        
         const requiredFields = form.querySelectorAll('[required]');
         let isValid = true;
         
@@ -83,105 +155,168 @@ forms.forEach(form => {
             if (!field.value.trim()) {
                 isValid = false;
                 field.style.borderColor = '#ef4444';
+                // Add visual feedback
+                field.classList.add('validation-error');
             } else {
                 field.style.borderColor = '#e2e8f0';
+                field.classList.remove('validation-error');
             }
         });
         
         if (!isValid) {
             e.preventDefault();
+            // Show error message
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'form-validation-error';
+            errorMessage.textContent = 'Пожалуйста, заполните все обязательные поля';
+            errorMessage.style.cssText = `
+                color: #ef4444;
+                background: rgba(239, 68, 68, 0.1);
+                padding: 0.75rem;
+                border-radius: 6px;
+                margin-bottom: 1rem;
+                border-left: 4px solid #ef4444;
+            `;
+            
+            // Insert error message at the top of the form
+            if (!form.querySelector('.form-validation-error')) {
+                form.insertBefore(errorMessage, form.firstChild);
+            }
+            
+            // Scroll to error
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     });
-});
+})();
 
 // ===== PASSWORD STRENGTH INDICATOR =====
-const passwordInputs = document.querySelectorAll('input[type="password"]');
-passwordInputs.forEach(input => {
-    if (input.name === 'password' || input.name === 'new_password') {
-        const strengthIndicator = document.createElement('div');
-        strengthIndicator.className = 'password-strength';
-        strengthIndicator.style.cssText = `
-            height: 4px;
-            margin-top: 8px;
-            border-radius: 2px;
-            background: #e2e8f0;
-            transition: all 0.3s ease;
-        `;
+(function() {
+    'use strict';
+    
+    // Use event delegation for better performance
+    document.addEventListener('input', function(e) {
+        const input = e.target;
+        if (!input.matches('input[type="password"]') || 
+            (input.name !== 'password' && input.name !== 'new_password')) return;
         
-        input.parentNode.insertBefore(strengthIndicator, input.nextSibling);
+        const password = input.value;
+        let strength = 0;
         
-        input.addEventListener('input', function() {
-            const password = this.value;
-            let strength = 0;
-            
-            if (password.length >= 8) strength++;
-            if (password.match(/[a-z]/)) strength++;
-            if (password.match(/[A-Z]/)) strength++;
-            if (password.match(/[0-9]/)) strength++;
-            if (password.match(/[^a-zA-Z0-9]/)) strength++;
-            
-            const colors = ['#ef4444', '#f59e0b', '#fbbf24', '#10b981', '#059669'];
-            const widths = ['20%', '40%', '60%', '80%', '100%'];
-            
-            if (password.length > 0) {
-                strengthIndicator.style.background = colors[strength - 1] || colors[0];
-                strengthIndicator.style.width = widths[strength - 1] || widths[0];
-            } else {
-                strengthIndicator.style.width = '0';
-                strengthIndicator.style.background = '#e2e8f0';
-            }
-        });
-    }
-});
+        if (password.length >= 8) strength++;
+        if (password.match(/[a-z]/)) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        // Get or create strength indicator
+        let strengthIndicator = input.parentNode.querySelector('.password-strength');
+        if (!strengthIndicator) {
+            strengthIndicator = document.createElement('div');
+            strengthIndicator.className = 'password-strength';
+            strengthIndicator.style.cssText = `
+                height: 4px;
+                margin-top: 8px;
+                border-radius: 2px;
+                background: #e2e8f0;
+                transition: all 0.3s ease;
+                width: 0;
+            `;
+            input.parentNode.insertBefore(strengthIndicator, input.nextSibling);
+        }
+        
+        const colors = ['#ef4444', '#f59e0b', '#fbbf24', '#10b981', '#059669'];
+        const widths = ['20%', '40%', '60%', '80%', '100%'];
+        
+        if (password.length > 0) {
+            strengthIndicator.style.background = colors[strength - 1] || colors[0];
+            strengthIndicator.style.width = widths[strength - 1] || widths[0];
+        } else {
+            strengthIndicator.style.width = '0';
+            strengthIndicator.style.background = '#e2e8f0';
+        }
+    });
+})();
 
 // ===== PARALLAX EFFECT FOR HERO =====
-window.addEventListener('scroll', () => {
-    const heroShapes = document.querySelectorAll('.shape');
-    const scrolled = window.pageYOffset;
+(function() {
+    'use strict';
     
-    heroShapes.forEach((shape, index) => {
-        const speed = 0.5 + (index * 0.1);
-        shape.style.transform = `translateY(${scrolled * speed}px)`;
-    });
-});
+    let ticking = false;
+    
+    function updateParallax() {
+        const heroShapes = document.querySelectorAll('.shape');
+        const scrolled = window.pageYOffset;
+        
+        heroShapes.forEach((shape, index) => {
+            const speed = 0.5 + (index * 0.1);
+            shape.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+        
+        ticking = false;
+    }
+    
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    }
+    
+    window.addEventListener('scroll', requestTick);
+})();
 
 // ===== FAQ ACCORDION =====
-const faqItems = document.querySelectorAll('.faq-item');
-faqItems.forEach(item => {
-    const question = item.querySelector('.faq-question');
-    const answer = item.querySelector('.faq-answer');
+(function() {
+    'use strict';
     
-    if (question && answer) {
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-        answer.style.overflow = 'hidden';
-        answer.style.transition = 'max-height 0.3s ease';
+    // Use event delegation for better performance
+    document.addEventListener('click', function(e) {
+        const question = e.target.closest('.faq-question');
+        if (!question) return;
         
-        question.style.cursor = 'pointer';
-        question.addEventListener('click', () => {
-            const isOpen = item.classList.contains('open');
-            
-            // Close all other items
-            faqItems.forEach(otherItem => {
-                if (otherItem !== item) {
-                    otherItem.classList.remove('open');
-                    const otherAnswer = otherItem.querySelector('.faq-answer');
-                    if (otherAnswer) {
-                        otherAnswer.style.maxHeight = otherAnswer.scrollHeight + 'px';
-                    }
+        const item = question.closest('.faq-item');
+        if (!item) return;
+        
+        const answer = item.querySelector('.faq-answer');
+        if (!answer) return;
+        
+        const isOpen = item.classList.contains('open');
+        
+        // Close all other items
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(otherItem => {
+            if (otherItem !== item) {
+                otherItem.classList.remove('open');
+                const otherAnswer = otherItem.querySelector('.faq-answer');
+                if (otherAnswer) {
+                    otherAnswer.style.maxHeight = otherAnswer.scrollHeight + 'px';
                 }
-            });
-            
-            // Toggle current item
-            item.classList.toggle('open');
+            }
         });
-    }
-});
+        
+        // Toggle current item
+        item.classList.toggle('open');
+        
+        // Update answer maxHeight for smooth animation
+        if (isOpen) {
+            answer.style.maxHeight = '0px';
+        } else {
+            answer.style.maxHeight = answer.scrollHeight + 'px';
+        }
+    });
+})();
 
 // ===== FLOATING CARDS ANIMATION =====
-const floatingCards = document.querySelectorAll('.floating-card');
-floatingCards.forEach((card, index) => {
-    card.style.animation = `float-card 3s infinite ease-in-out ${index * 0.5}s`;
-});
+(function() {
+    'use strict';
+    
+    const floatingCards = document.querySelectorAll('.floating-card');
+    floatingCards.forEach((card, index) => {
+        // Use CSS class instead of inline style for better performance
+        card.classList.add('floating-animation');
+        card.style.animationDelay = `${index * 0.5}s`;
+    });
+})();
 
 // ===== LOADING STATE FOR BUTTONS =====
 const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"]');
