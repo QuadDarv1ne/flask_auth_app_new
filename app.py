@@ -67,6 +67,29 @@ def create_app(config_class=Config):
         if hasattr(g, 'start_time'):
             endpoint = request.endpoint or 'unknown'
             record_request_metrics(g.start_time, endpoint, request.method, response.status_code)
+        
+        # Добавляем заголовки безопасности
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        
+        # Content Security Policy
+        csp = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://kit.fontawesome.com https://cdnjs.cloudflare.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com https://kit.fontawesome.com; "
+            "img-src 'self' data: https:; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none';"
+        )
+        response.headers['Content-Security-Policy'] = csp
+        
+        # Force HTTPS if configured
+        if app.config.get('FORCE_HTTPS', False):
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        
         return response
     
     # Регистрация blueprints
