@@ -36,32 +36,34 @@
 <div class="features-modern">
     <div class="container">
         <div class="auth-card" style="max-width: 500px; margin: 0 auto;">
-            <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+            <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form" role="form" aria-label="Форма входа">
                 {{ form.hidden_tag() }}
                 
                 <div class="mb-3">
-                    <label for="username" class="form-label">
+                    <label for="username" class="form-label" aria-describedby="username-help">
                         <i class="fas fa-user"></i> {{ form.username.label.text }}
                     </label>
-                    {{ form.username(class="form-control", placeholder="Введите имя пользователя") }}
+                    {{ form.username(class="form-control", placeholder="Введите имя пользователя", **{'aria-required': 'true', 'aria-invalid': 'false' if not form.username.errors else 'true'}) }}
+                    <div id="username-help" class="sr-only">Введите ваше имя пользователя</div>
                     {% if form.username.errors %}
-                        <div class="form-errors">
+                        <div class="form-errors" role="alert" aria-live="assertive">
                             {% for error in form.username.errors %}
-                                <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                <span class="error-message"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> {{ error }}</span>
                             {% endfor %}
                         </div>
                     {% endif %}
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">
+                    <label for="password" class="form-label" aria-describedby="password-help">
                         <i class="fas fa-lock"></i> {{ form.password.label.text }}
                     </label>
-                    {{ form.password(class="form-control", placeholder="Введите пароль") }}
+                    {{ form.password(class="form-control", placeholder="Введите пароль", **{'aria-required': 'true', 'aria-invalid': 'false' if not form.password.errors else 'true'}) }}
+                    <div id="password-help" class="sr-only">Введите ваш пароль</div>
                     {% if form.password.errors %}
-                        <div class="form-errors">
+                        <div class="form-errors" role="alert" aria-live="assertive">
                             {% for error in form.password.errors %}
-                                <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                <span class="error-message"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> {{ error }}</span>
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -75,8 +77,8 @@
                 </div>
 
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span class="loading-spinner"></span>
+                    <button type="submit" class="btn btn-primary btn-block" aria-busy="false" aria-live="polite">
+                        <span class="loading-spinner" aria-hidden="true"></span>
                         <span class="btn-text">{{ form.submit.label.text }}</span>
                     </button>
                 </div>

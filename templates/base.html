@@ -59,26 +59,26 @@
                         <a class="nav-link" href="{{ url_for('main.contact') }}" role="menuitem">Контакты</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
+                <ul class="navbar-nav" role="menu">
                     {% if current_user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">Личный кабинет</a>
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="{{ url_for('main.dashboard') }}" role="menuitem">Личный кабинет</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.profile') }}">Профиль</a>
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="{{ url_for('main.profile') }}" role="menuitem">Профиль</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="btn btn-outline-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+                        <li class="nav-item" role="none">
+                            <a class="btn btn-outline-danger" href="{{ url_for('auth.logout') }}" role="menuitem">Выйти</a>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="btn btn-primary me-2" href="{{ url_for('auth.login') }}">Войти</a>
+                        <li class="nav-item" role="none">
+                            <a class="btn btn-primary me-2" href="{{ url_for('auth.login') }}" role="menuitem">Войти</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="btn btn-outline-primary" href="{{ url_for('auth.register') }}">Регистрация</a>
+                        <li class="nav-item" role="none">
+                            <a class="btn btn-outline-primary" href="{{ url_for('auth.register') }}" role="menuitem">Регистрация</a>
                         </li>
                     {% endif %}
-                    <li class="nav-item">
+                    <li class="nav-item" role="none">
                         <button class="theme-toggle btn" id="themeToggle" aria-label="Переключить тему">
                             <i class="fas fa-moon"></i>
                         </button>
