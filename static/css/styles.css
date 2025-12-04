@@ -131,14 +131,32 @@ body.dark-mode .theme-toggle:hover {
     top: 0;
     z-index: 1000;
     padding: 1rem 0;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: var(--shadow-md);
+    padding: 0.5rem 0;
+}
+
+.navbar .container {
+    max-width: 1400px;
+    padding: 0 2rem;
 }
 
 body.dark-mode .navbar {
-    background: var(--dark-card-bg);
+    background: rgba(30, 41, 59, 0.95);
     box-shadow: var(--dark-shadow-sm);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--dark-border-color);
+}
+
+body.dark-mode .navbar.scrolled {
+    background: rgba(30, 41, 59, 0.98);
+    box-shadow: var(--dark-shadow-md);
 }
 
 .navbar .container {
@@ -181,11 +199,31 @@ body.dark-mode .navbar {
     color: var(--text-primary);
     font-weight: 500;
     transition: all 0.3s ease;
-    padding: 0.75rem 1.25rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 50px;
     position: relative;
     overflow: hidden;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-gradient);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-menu a:hover::after {
+    width: 80%;
 }
 
 .nav-menu a::before {
@@ -208,8 +246,12 @@ body.dark-mode .navbar {
 
 .nav-menu a:hover {
     color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.nav-menu a:active {
+    transform: translateY(-1px);
 }
 
 body.dark-mode .nav-menu a {
@@ -218,8 +260,8 @@ body.dark-mode .nav-menu a {
 
 body.dark-mode .nav-menu a:hover {
     color: #667eea;
-    background: rgba(102, 126, 234, 0.2);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(102, 126, 234, 0.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn-login, .btn-register {
