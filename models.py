@@ -56,14 +56,51 @@ class User(UserMixin, db.Model):
         db.session.commit()
     
     def set_avatar(self, filename):
-        """Установка аватара пользователя"""
+        """Установка аватара пользователя с оптимизацией"""
         self.avatar_filename = filename
         db.session.commit()
+        
+        # Автоматическая оптимизация аватара если файл существует
+        if filename:
+            from utils.image_optimizer import optimize_image, WEBP_SUPPORTED
+            from flask import current_app
+            import os
+            
+            avatar_path = os.path.join(current_app.root_path, 'static', 'uploads', 'avatars', filename)
+            if os.path.exists(avatar_path):
+                # Используем WebP если поддерживается
+                format_type = 'WEBP' if WEBP_SUPPORTED else 'JPEG'
+                optimized_data = optimize_image(avatar_path, quality=85, max_width=200, max_height=200, format=format_type)
+                if optimized_data:
+                    # Если используется WebP, меняем расширение файла
+                    if format_type == 'WEBP':
+                        name, ext = os.path.splitext(filename)
+                        webp_filename = f"{name}.webp"
+                        webp_path = os.path.join(current_app.root_path, 'static', 'uploads', 'avatars', webp_filename)
+                        with open(webp_path, 'wb') as f:
+                            f.write(optimized_data)
+                        # Обновляем имя файла в базе данных
+                        self.avatar_filename = webp_filename
+                        db.session.commit()
+                    else:
+                        with open(avatar_path, 'wb') as f:
+                            f.write(optimized_data)
     
     def get_avatar_url(self):
         """Получение URL аватара пользователя"""
         if self.avatar_filename:
             return f"/static/uploads/avatars/{self.avatar_filename}"
+        return None
+    
+    def get_avatar_url_with_fallback(self):
+        """Получение URL аватара с фолбэком для WebP"""
+        if self.avatar_filename:
+            avatar_url = f"/static/uploads/avatars/{self.avatar_filename}"
+            # Если это WebP файл, добавляем фолбэк для старых браузеров
+            if self.avatar_filename.endswith('.webp'):
+                # Для современных браузеров поддерживается WebP
+                return avatar_url
+            return avatar_url
         return None
     
     def enable_2fa(self):

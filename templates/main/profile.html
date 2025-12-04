@@ -8,7 +8,12 @@
         <div class="profile-header">
             <div class="profile-avatar-container">
                 {% if user.get_avatar_url() %}
-                    <img src="{{ user.get_avatar_url() }}" alt="Аватар {{ user.username }}" class="profile-avatar-img" loading="lazy">
+                    <picture>
+                        {% if user.avatar_filename and user.avatar_filename.endswith('.webp') %}
+                            <source srcset="{{ user.get_avatar_url() }}" type="image/webp">
+                        {% endif %}
+                        <img src="{{ user.get_avatar_url() }}" alt="Аватар {{ user.username }}" class="profile-avatar-img" loading="lazy">
+                    </picture>
                 {% else %}
                     <div class="profile-avatar-placeholder">
                         <i class="fas fa-user"></i>

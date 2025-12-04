@@ -8,8 +8,15 @@ import io
 import base64
 from flask import current_app
 
+# Проверяем поддержку WebP
+try:
+    from PIL import features
+    WEBP_SUPPORTED = features.check('webp')
+except ImportError:
+    WEBP_SUPPORTED = False
 
-def optimize_image(image_path, quality=85, max_width=1920, max_height=1080):
+
+def optimize_image(image_path, quality=85, max_width=1920, max_height=1080, format='JPEG'):
     """
     Оптимизация изображения для веба
     
@@ -18,6 +25,7 @@ def optimize_image(image_path, quality=85, max_width=1920, max_height=1080):
         quality (int): Качество JPEG (по умолчанию 85)
         max_width (int): Максимальная ширина (по умолчанию 1920)
         max_height (int): Максимальная высота (по умолчанию 1080)
+        format (str): Формат выходного изображения (по умолчанию JPEG)
     
     Returns:
         bytes: Оптимизированное изображение
@@ -40,7 +48,13 @@ def optimize_image(image_path, quality=85, max_width=1920, max_height=1080):
             
             # Сохраняем в буфер с оптимизацией
             buffer = io.BytesIO()
-            img.save(buffer, format='JPEG', quality=quality, optimize=True)
+            
+            # Используем WebP если поддерживается и запрошено
+            if format.upper() == 'WEBP' and WEBP_SUPPORTED:
+                img.save(buffer, format='WEBP', quality=quality, method=6, lossless=False)
+            else:
+                img.save(buffer, format='JPEG', quality=quality, optimize=True)
+            
             return buffer.getvalue()
     except Exception as e:
         current_app.logger.error(f"Ошибка оптимизации изображения {image_path}: {e}")
