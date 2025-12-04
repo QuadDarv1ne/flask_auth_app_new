@@ -1300,8 +1300,8 @@ body.dark-mode .stat-value {
     color: var(--success-color);
 }
 
-    /* ===== АДАПТИВНОСТЬ ===== */
-    @media (max-width: 768px) {
+/* ===== АДАПТИВНОСТЬ ===== */
+@media screen and (max-width: 768px) {
         .hero-title {
             font-size: 2rem;
         }
@@ -1396,6 +1396,17 @@ body.dark-mode .stat-value {
     
     .testimonials-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ===== LARGE MOBILE DEVICES (576px and up) ===== */
+@media (min-width: 576px) and (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -1745,6 +1756,22 @@ body.dark-mode .profile-header {
     .flash-messages {
         width: calc(100% - 40px);
         right: 20px;
+    }
+}
+
+/* ===== EXTRA SMALL DEVICES (UNDER 480px) ===== */
+@media (max-width: 479px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons a {
+        width: 100%;
+        text-align: center;
     }
 }
 
