@@ -460,34 +460,40 @@
 })();
 
 // ===== ENHANCED FORM VALIDATION =====
-function initEnhancedValidation() {
-    // Live validation for all form inputs
-    const inputs = document.querySelectorAll('input, textarea, select');
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            validateField(this);
-        });
+(function() {
+    'use strict';
+    
+    function initEnhancedValidation() {
+        // Use event delegation for better performance
+        document.addEventListener('blur', function(e) {
+            const field = e.target;
+            if (field.matches('input, textarea, select')) {
+                validateField(field);
+            }
+        }, true); // Use capture phase for blur events
         
-        input.addEventListener('input', function() {
-            // Clear error when user starts typing
-            const errorContainer = this.parentNode.querySelector('.form-errors');
-            if (errorContainer) {
-                errorContainer.innerHTML = '';
+        document.addEventListener('input', function(e) {
+            const field = e.target;
+            if (field.matches('input, textarea, select')) {
+                // Clear error when user starts typing
+                const errorContainer = field.parentNode.querySelector('.form-errors');
+                if (errorContainer) {
+                    errorContainer.innerHTML = '';
+                }
             }
         });
-    });
-}
-
-function validateField(field) {
-    const value = field.value.trim();
-    const errorContainer = field.parentNode.querySelector('.form-errors') || 
-                         createErrorContainer(field.parentNode);
+    }
     
-    // Clear previous errors
-    errorContainer.innerHTML = '';
-    
-    // Field-specific validation
-    if (field.hasAttribute('required') && !value) {
+    function validateField(field) {
+        const value = field.value.trim();
+        const errorContainer = field.parentNode.querySelector('.form-errors') || 
+                             createErrorContainer(field.parentNode);
+        
+        // Clear previous errors
+        errorContainer.innerHTML = '';
+        
+        // Field-specific validation
+        if (field.hasAttribute('required') && !value) {
         showError(errorContainer, 'Это поле обязательно для заполнения');
         return false;
     }
@@ -521,6 +527,14 @@ function validateField(field) {
     
     return true;
 }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initEnhancedValidation);
+    } else {
+        initEnhancedValidation();
+    }
+})();
 
 // ===== TOAST NOTIFICATIONS =====
 function showToast(message, type = 'info') {
@@ -614,5 +628,18 @@ document.addEventListener('click', function(event) {
         bsCollapse.hide();
     }
 });
+
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js')
+            .then(registration => {
+                console.log('Service Worker зарегистрирован:', registration);
+            })
+            .catch(error => {
+                console.log('Ошибка регистрации Service Worker:', error);
+            });
+    });
+}
 
 console.log('Flask Auth App - Enhanced UI Loaded ✨');

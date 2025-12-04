@@ -30,10 +30,10 @@
                     Заполните форму обратной связи, и мы свяжемся с вами в ближайшее время.
                 </p>
                 
-                <div class="floating-card" style="position: relative; margin-top: 2rem; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+                <div class="floating-card contact-info-card">
                     <i class="fas fa-map-marker-alt"></i>
                     <div>
-                        <div style="font-size: 0.9rem; opacity: 0.8;">Наш офис</div>
+                        <div class="text-small opacity-80">Наш офис</div>
                         <div>Москва, Россия</div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                     <div class="floating-card card-1">
                         <i class="fas fa-phone"></i>
                         <div>
-                            <div style="font-size: 0.9rem; opacity: 0.8;">Телефон</div>
+                            <div class="text-small opacity-80">Телефон</div>
                             <div>+7 (495) 123-45-67</div>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                     <div class="floating-card card-2">
                         <i class="fas fa-envelope"></i>
                         <div>
-                            <div style="font-size: 0.9rem; opacity: 0.8;">Email</div>
+                            <div class="text-small opacity-80">Email</div>
                             <div>support@flaskauth.com</div>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                     <div class="floating-card card-3">
                         <i class="fas fa-clock"></i>
                         <div>
-                            <div style="font-size: 0.9rem; opacity: 0.8;">Рабочее время</div>
+                            <div class="text-small opacity-80">Рабочее время</div>
                             <div>Пн-Пт: 9:00-18:00</div>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
             </p>
         </div>
         
-        <div class="auth-card" style="max-width: 600px; margin: 0 auto;">
+        <div class="contact-form-wrapper">
             <form method="POST" class="profile-form">
                 {{ form.hidden_tag() }}
                 
@@ -148,7 +148,7 @@
     </div>
 </div>
 
-<div class="features-modern" style="background: #f8fafc;">
+<div class="features-modern bg-light-gray">
     <div class="container">
         <div class="section-header">
             <div class="section-badge">ДРУГИЕ СПОСОБЫ СВЯЗИ</div>
