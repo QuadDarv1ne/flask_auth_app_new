@@ -262,4 +262,98 @@ statNumbers.forEach(stat => {
     statsObserver.observe(stat);
 });
 
+// ===== TOOLTIPS =====
+function initTooltips() {
+    const tooltips = document.querySelectorAll('[data-tooltip]');
+    tooltips.forEach(tooltip => {
+        const tooltipText = tooltip.getAttribute('data-tooltip');
+        const position = tooltip.getAttribute('data-tooltip-position') || 'top';
+        
+        // Create tooltip element
+        const tooltipEl = document.createElement('span');
+        tooltipEl.className = `tooltip-text tooltip-${position}`;
+        tooltipEl.textContent = tooltipText;
+        
+        // Wrap the element in a tooltip container
+        const wrapper = document.createElement('span');
+        wrapper.className = 'tooltip';
+        
+        // Insert wrapper before the element
+        tooltip.parentNode.insertBefore(wrapper, tooltip);
+        // Move the element into the wrapper
+        wrapper.appendChild(tooltip);
+        // Add tooltip text
+        wrapper.appendChild(tooltipEl);
+    });
+}
+
+// ===== ENHANCED FORM VALIDATION =====
+function initEnhancedValidation() {
+    // Live validation for all form inputs
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+        
+        input.addEventListener('input', function() {
+            // Clear error when user starts typing
+            const errorContainer = this.parentNode.querySelector('.form-errors');
+            if (errorContainer) {
+                errorContainer.innerHTML = '';
+            }
+        });
+    });
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+    const errorContainer = field.parentNode.querySelector('.form-errors') || 
+                         createErrorContainer(field.parentNode);
+    
+    // Clear previous errors
+    errorContainer.innerHTML = '';
+    
+    // Field-specific validation
+    if (field.hasAttribute('required') && !value) {
+        showError(errorContainer, 'Это поле обязательно для заполнения');
+        return false;
+    }
+    
+    if (field.type === 'email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            showError(errorContainer, 'Введите корректный email адрес');
+            return false;
+        }
+    }
+    
+    if (field.name === 'password' && value) {
+        if (value.length < 8) {
+            showError(errorContainer, 'Пароль должен содержать минимум 8 символов');
+            return false;
+        }
+        if (!/[A-Z]/.test(value)) {
+            showError(errorContainer, 'Пароль должен содержать хотя бы одну заглавную букву');
+            return false;
+        }
+        if (!/[a-z]/.test(value)) {
+            showError(errorContainer, 'Пароль должен содержать хотя бы одну строчную букву');
+            return false;
+        }
+        if (!/\d/.test(value)) {
+            showError(errorContainer, 'Пароль должен содержать хотя бы одну цифру');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Initialize tooltips and enhanced validation when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initTooltips();
+    initEnhancedValidation();
+});
+
 console.log('Flask Auth App - Enhanced UI Loaded ✨');

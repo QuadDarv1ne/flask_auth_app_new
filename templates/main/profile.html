@@ -49,7 +49,7 @@
                         <label for="email">
                             <i class="fas fa-envelope"></i> {{ profile_form.email.label.text }}
                         </label>
-                        {{ profile_form.email(class="form-control", type="email") }}
+                        {{ profile_form.email(class="form-control", type="email", **{'data-tooltip': 'Ваш email будет использоваться для входа и восстановления пароля', 'data-tooltip-position': 'top'}) }}
                         {% if profile_form.email.errors %}
                             <div class="form-errors">
                                 {% for error in profile_form.email.errors %}
@@ -63,7 +63,7 @@
                         <label for="avatar">
                             <i class="fas fa-image"></i> {{ profile_form.avatar.label.text }}
                         </label>
-                        {{ profile_form.avatar(class="form-control-file") }}
+                        {{ profile_form.avatar(class="form-control-file", **{'data-tooltip': 'Выберите изображение для вашего профиля. Поддерживаемые форматы: JPG, PNG, GIF', 'data-tooltip-position': 'bottom'}) }}
                         <small class="form-text">Поддерживаемые форматы: JPG, PNG, GIF. Максимальный размер: 5MB</small>
                         {% if profile_form.avatar.errors %}
                             <div class="form-errors">
@@ -71,7 +71,7 @@
                                     <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
                                 {% endfor %}
                             </div>
-                        {% endif %}
+                        {% endif %
                     </div>
 
                     <div class="form-group">
