@@ -418,4 +418,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Navbar scroll effect
+window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
 console.log('Flask Auth App - Enhanced UI Loaded ✨');
