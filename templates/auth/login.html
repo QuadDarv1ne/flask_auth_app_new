@@ -73,7 +73,10 @@
                 </div>
 
                 <div class="form-group">
-                    {{ form.submit(class="btn-modern btn-primary-modern btn-block") }}
+                    <button type="submit" class="btn-modern btn-primary-modern btn-block">
+                                            <span class="loading-spinner"></span>
+                                            <span class="btn-text">{{ form.submit.label.text }}</span>
+                                        </button>
                 </div>
 
                 <div class="auth-footer">
