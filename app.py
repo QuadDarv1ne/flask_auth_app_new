@@ -17,7 +17,8 @@ login_manager = LoginManager()
 mail = Mail()
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
 )
 
 def create_app(config_class=Config):
@@ -37,6 +38,10 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    
+    # Configure rate limiter storage
+    if hasattr(config_class, 'RATELIMIT_STORAGE_URL'):
+        app.config.setdefault('RATELIMIT_STORAGE_URL', config_class.RATELIMIT_STORAGE_URL)
     limiter.init_app(app)
     
     # Настройка логирования

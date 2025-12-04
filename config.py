@@ -47,3 +47,6 @@ class Config:
     
     # Настройки для продакшена (установить в True когда будет HTTPS)
     FORCE_HTTPS = os.environ.get('FORCE_HTTPS', 'false').lower() in ['true', 'on', '1']
+    
+    # Rate limiting configuration
+    RATELIMIT_STORAGE_URL = os.environ.get('REDIS_URL') or 'memory://'
