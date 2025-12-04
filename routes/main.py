@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app import db
 from forms import UpdateProfileForm, ChangePasswordForm
+from utils.logging import log_user_action
 
 main_bp = Blueprint('main', __name__)
 
@@ -24,9 +25,17 @@ def profile():
     password_form = ChangePasswordForm()
     
     if profile_form.validate_on_submit():
+        old_username = current_user.username
         current_user.username = profile_form.username.data
         current_user.email = profile_form.email.data
         db.session.commit()
+        
+        log_user_action(
+            current_user.username,
+            'profile_updated',
+            f'Old username: {old_username}, New email: {current_user.email}'
+        )
+        
         flash('Ваш профиль успешно обновлен!', 'success')
         return redirect(url_for('main.profile'))
     elif profile_form.is_submitted():
@@ -57,6 +66,13 @@ def change_password():
         # Установка нового пароля
         current_user.set_password(password_form.new_password.data)
         db.session.commit()
+        
+        log_user_action(
+            current_user.username,
+            'password_changed',
+            'Password successfully updated'
+        )
+        
         flash('Пароль успешно изменен!', 'success')
         return redirect(url_for('main.profile'))
     
