@@ -226,7 +226,9 @@ body.dark-mode .navbar-nav .nav-link:hover {
 
 .nav-brand a:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    /* Улучшенная анимация при наведении */
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .nav-menu {
@@ -241,7 +243,7 @@ body.dark-mode .navbar-nav .nav-link:hover {
     text-decoration: none;
     color: var(--text-primary);
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     padding: 0.75rem 1.5rem;
     border-radius: 50px;
     position: relative;
