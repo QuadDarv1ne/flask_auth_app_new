@@ -24,6 +24,7 @@ class Config:
     # WTForms настройки
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = None  # CSRF токен не истекает
+    WTF_CSRF_SSL_STRICT = True  # Строгая проверка CSRF для HTTPS
     
     # Flask-Mail настройки
     MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
@@ -39,3 +40,10 @@ class Config:
     # Настройки производительности
     CACHE_TIMEOUT = int(os.environ.get('CACHE_TIMEOUT') or 300)  # 5 минут
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB максимальный размер загружаемых файлов
+    
+    # Дополнительные настройки безопасности
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    
+    # Настройки для продакшена (установить в True когда будет HTTPS)
+    FORCE_HTTPS = os.environ.get('FORCE_HTTPS', 'false').lower() in ['true', 'on', '1']
