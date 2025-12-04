@@ -421,29 +421,43 @@
 })();
 
 // ===== TOOLTIPS =====
-function initTooltips() {
-    const tooltips = document.querySelectorAll('[data-tooltip]');
-    tooltips.forEach(tooltip => {
-        const tooltipText = tooltip.getAttribute('data-tooltip');
-        const position = tooltip.getAttribute('data-tooltip-position') || 'top';
-        
-        // Create tooltip element
-        const tooltipEl = document.createElement('span');
-        tooltipEl.className = `tooltip-text tooltip-${position}`;
-        tooltipEl.textContent = tooltipText;
-        
-        // Wrap the element in a tooltip container
-        const wrapper = document.createElement('span');
-        wrapper.className = 'tooltip';
-        
-        // Insert wrapper before the element
-        tooltip.parentNode.insertBefore(wrapper, tooltip);
-        // Move the element into the wrapper
-        wrapper.appendChild(tooltip);
-        // Add tooltip text
-        wrapper.appendChild(tooltipEl);
-    });
-}
+(function() {
+    'use strict';
+    
+    function initTooltips() {
+        const tooltips = document.querySelectorAll('[data-tooltip]');
+        tooltips.forEach(tooltip => {
+            const tooltipText = tooltip.getAttribute('data-tooltip');
+            const position = tooltip.getAttribute('data-tooltip-position') || 'top';
+            
+            // Check if tooltip already exists
+            if (tooltip.parentNode.classList.contains('tooltip')) return;
+            
+            // Create tooltip element
+            const tooltipEl = document.createElement('span');
+            tooltipEl.className = `tooltip-text tooltip-${position}`;
+            tooltipEl.textContent = tooltipText;
+            
+            // Wrap the element in a tooltip container
+            const wrapper = document.createElement('span');
+            wrapper.className = 'tooltip';
+            
+            // Insert wrapper before the element
+            tooltip.parentNode.insertBefore(wrapper, tooltip);
+            // Move the element into the wrapper
+            wrapper.appendChild(tooltip);
+            // Add tooltip text
+            wrapper.appendChild(tooltipEl);
+        });
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTooltips);
+    } else {
+        initTooltips();
+    }
+})();
 
 // ===== ENHANCED FORM VALIDATION =====
 function initEnhancedValidation() {
