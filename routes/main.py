@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, session
 from flask_login import login_required, current_user
-from app import db
+from app import db, limiter
 from forms import UpdateProfileForm, ChangePasswordForm, ContactForm, TwoFactorSetupForm, TwoFactorVerifyForm
 from utils.logging import log_user_action
 from utils.performance import cache_response
+from utils.security import rate_limit_sensitive_operations, detect_suspicious_activity
 import os
 from werkzeug.utils import secure_filename
 import pyqrcode
@@ -135,14 +136,18 @@ def setup_2fa():
 
 @main_bp.route('/change-password', methods=['POST'])
 @login_required
+@limiter.limit("3 per minute")  # Ограничиваем частоту изменения пароля
+@rate_limit_sensitive_operations(max_attempts=3, window=300)  # 3 попытки за 5 минут
 def change_password():
     """Изменение пароля пользователя"""
+    detect_suspicious_activity('password_change_attempt')
     password_form = ChangePasswordForm()
     
     if password_form.validate_on_submit():
         # Проверка текущего пароля
         if not current_user.check_password(password_form.current_password.data):
             flash('Неверный текущий пароль!', 'error')
+            detect_suspicious_activity('failed_password_change', 'Invalid current password')
             return redirect(url_for('main.profile'))
         
         # Установка нового пароля
