@@ -39,8 +39,8 @@
             <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form">
                 {{ form.hidden_tag() }}
                 
-                <div class="form-group">
-                    <label for="username">
+                <div class="mb-3">
+                    <label for="username" class="form-label">
                         <i class="fas fa-user"></i> {{ form.username.label.text }}
                     </label>
                     {{ form.username(class="form-control", placeholder="Выберите имя пользователя") }}
@@ -53,8 +53,8 @@
                     {% endif %}
                 </div>
 
-                <div class="form-group">
-                    <label for="email">
+                <div class="mb-3">
+                    <label for="email" class="form-label">
                         <i class="fas fa-envelope"></i> {{ form.email.label.text }}
                     </label>
                     {{ form.email(class="form-control", type="email", placeholder="Введите email адрес") }}
@@ -67,8 +67,8 @@
                     {% endif %}
                 </div>
 
-                <div class="form-group">
-                    <label for="password">
+                <div class="mb-3">
+                    <label for="password" class="form-label">
                         <i class="fas fa-lock"></i> {{ form.password.label.text }}
                     </label>
                     {{ form.password(class="form-control", placeholder="Минимум 8 символов", id="password") }}
@@ -87,8 +87,8 @@
                     {% endif %}
                 </div>
 
-                <div class="form-group">
-                    <label for="password2">
+                <div class="mb-3">
+                    <label for="password2" class="form-label">
                         <i class="fas fa-lock"></i> {{ form.password2.label.text }}
                     </label>
                     {{ form.password2(class="form-control", placeholder="Повторите пароль") }}
@@ -101,11 +101,11 @@
                     {% endif %}
                 </div>
 
-                <div class="form-group">
-                    <button type="submit" class="btn-modern btn-primary-modern btn-block">
-                                            <span class="loading-spinner"></span>
-                                            <span class="btn-text">{{ form.submit.label.text }}</span>
-                                        </button>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="loading-spinner"></span>
+                        <span class="btn-text">{{ form.submit.label.text }}</span>
+                    </button>
                 </div>
 
                 <div class="auth-footer">
