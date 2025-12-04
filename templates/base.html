@@ -42,10 +42,13 @@
         {% if messages %}
             <div class="flash-messages">
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
-                        {{ message }}
-                        <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+                    <div class="alert alert-{{ category }} slide-in">
+                        <div class="alert-content">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' or category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                            <span class="alert-message">{{ message }}</span>
+                            <button class="close-btn" onclick="this.closest('.alert').remove()">×</button>
+                        </div>
+                        <div class="alert-progress"></div>
                     </div>
                 {% endfor %}
             </div>

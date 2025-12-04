@@ -178,17 +178,49 @@ body.dark-mode .nav-menu a:hover {
 }
 
 .alert {
-    padding: 1rem;
+    padding: 0;
     margin-bottom: 1rem;
     border-radius: 8px;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    animation: slideIn 0.3s ease-out;
+    flex-direction: column;
     box-shadow: var(--shadow-md);
     background: var(--card-bg);
     border-left: 4px solid var(--info-color);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: slideInAlert 0.3s ease-out forwards;
+}
+
+@keyframes slideInAlert {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-content {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-progress {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    width: 100%;
+    animation: progress 5s linear forwards;
+}
+
+@keyframes progress {
+    from { width: 100%; }
+    to { width: 0%; }
 }
 
 body.dark-mode .alert {
@@ -200,16 +232,32 @@ body.dark-mode .alert {
     border-left-color: var(--success-color);
 }
 
-.alert-error {
+.alert-success .alert-progress {
+    background: var(--success-color);
+}
+
+.alert-error, .alert-danger {
     border-left-color: var(--error-color);
+}
+
+.alert-error .alert-progress, .alert-danger .alert-progress {
+    background: var(--error-color);
 }
 
 .alert-warning {
     border-left-color: var(--warning-color);
 }
 
+.alert-warning .alert-progress {
+    background: var(--warning-color);
+}
+
 .alert-info {
     border-left-color: var(--info-color);
+}
+
+.alert-info .alert-progress {
+    background: var(--info-color);
 }
 
 .close-btn {
@@ -218,6 +266,23 @@ body.dark-mode .alert {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
     color: var(--text-secondary);
     transition: var(--transition);
 }
