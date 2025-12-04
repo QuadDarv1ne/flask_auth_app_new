@@ -1,15 +1,18 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, IntegerField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, NumberRange
 from models import User
 from validators import PasswordStrength, NoCommonPasswords, UsernameValidator
 
 class LoginForm(FlaskForm):
     """Форма входа в систему"""
     
-    username = StringField('Имя пользователя', 
-                          validators=[DataRequired(message='Введите имя пользователя')])
+    email = StringField('Email', 
+                       validators=[
+                           DataRequired(message='Введите email'),
+                           Email(message='Введите корректный email адрес')
+                       ])
     password = PasswordField('Пароль', 
                             validators=[DataRequired(message='Введите пароль')])
     remember_me = BooleanField('Запомнить меня')
@@ -114,6 +117,21 @@ class ChangePasswordForm(FlaskForm):
                                         EqualTo('new_password', message='Пароли должны совпадать')
                                     ])
     submit = SubmitField('Изменить пароль')
+
+class TwoFactorSetupForm(FlaskForm):
+    """Форма настройки двухфакторной аутентификации"""
+    
+    submit = SubmitField('Включить 2FA')
+
+class TwoFactorVerifyForm(FlaskForm):
+    """Форма проверки двухфакторной аутентификации"""
+    
+    token = IntegerField('Код 2FA', 
+                        validators=[
+                            DataRequired(message='Введите код из приложения аутентификации'),
+                            NumberRange(min=100000, max=999999, message='Код должен состоять из 6 цифр')
+                        ])
+    submit = SubmitField('Подтвердить')
 
 class ContactForm(FlaskForm):
     """Форма обратной связи"""
