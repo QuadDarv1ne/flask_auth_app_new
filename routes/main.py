@@ -37,7 +37,8 @@ def profile():
     profile_form.email.data = current_user.email
     
     return render_template('main/profile.html', 
-                         title='Профиль', 
+                         title='Профиль',
+                         user=current_user,
                          profile_form=profile_form,
                          password_form=password_form)
 

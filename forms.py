@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from models import User
+from validators import PasswordStrength, NoCommonPasswords, UsernameValidator
 
 class LoginForm(FlaskForm):
     """Форма входа в систему"""
@@ -19,7 +20,8 @@ class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', 
                           validators=[
                               DataRequired(message='Введите имя пользователя'),
-                              Length(min=3, max=80, message='Имя пользователя должно быть от 3 до 80 символов')
+                              Length(min=3, max=80, message='Имя пользователя должно быть от 3 до 80 символов'),
+                              UsernameValidator()
                           ])
     email = StringField('Email', 
                        validators=[
@@ -29,7 +31,10 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Пароль', 
                             validators=[
                                 DataRequired(message='Введите пароль'),
-                                Length(min=6, message='Пароль должен содержать минимум 6 символов')
+                                Length(min=8, message='Пароль должен содержать минимум 8 символов'),
+                                PasswordStrength(require_uppercase=True, require_lowercase=True, 
+                                               require_digit=True, require_special=False),
+                                NoCommonPasswords()
                             ])
     password2 = PasswordField('Повторите пароль', 
                              validators=[
@@ -56,7 +61,8 @@ class UpdateProfileForm(FlaskForm):
     username = StringField('Имя пользователя', 
                           validators=[
                               DataRequired(message='Введите имя пользователя'),
-                              Length(min=3, max=80, message='Имя пользователя должно быть от 3 до 80 символов')
+                              Length(min=3, max=80, message='Имя пользователя должно быть от 3 до 80 символов'),
+                              UsernameValidator()
                           ])
     email = StringField('Email', 
                        validators=[
@@ -92,7 +98,10 @@ class ChangePasswordForm(FlaskForm):
     new_password = PasswordField('Новый пароль', 
                                 validators=[
                                     DataRequired(message='Введите новый пароль'),
-                                    Length(min=6, message='Пароль должен содержать минимум 6 символов')
+                                    Length(min=8, message='Пароль должен содержать минимум 8 символов'),
+                                    PasswordStrength(require_uppercase=True, require_lowercase=True, 
+                                                   require_digit=True, require_special=False),
+                                    NoCommonPasswords()
                                 ])
     confirm_password = PasswordField('Подтвердите новый пароль', 
                                     validators=[

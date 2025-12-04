@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required
-from werkzeug.urls import url_parse
+from urllib.parse import urlparse
 from app import db
 from models import User
 from forms import LoginForm, RegistrationForm
@@ -29,7 +29,7 @@ def login():
         
         # Перенаправление на страницу, с которой пользователь пришел
         next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
+        if not next_page or urlparse(next_page).netloc != '':
             next_page = url_for('main.dashboard')
         
         return redirect(next_page)
