@@ -1300,56 +1300,72 @@ body.dark-mode .stat-value {
     color: var(--success-color);
 }
 
-/* ===== АДАПТИВНОСТЬ ===== */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2rem;
+    /* ===== АДАПТИВНОСТЬ ===== */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .hero-buttons {
+            flex-direction: column;
+        }
+        
+        .nav-menu {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .auth-card {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+        }
+        
+        .user-info-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .user-details h2 {
+            font-size: 1.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .flash-messages {
+            left: 10px;
+            right: 10px;
+            max-width: none;
+        }
+        
+        .profile-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .error-code {
+            font-size: 4rem;
+        }
+        
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .stat-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
     }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-    
-    .hero-buttons {
-        flex-direction: column;
-    }
-    
-    .nav-menu {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    
-    .auth-card {
-        padding: 2rem 1.5rem;
-    }
-    
-    .user-info-card {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .user-details h2 {
-        font-size: 1.5rem;
-    }
-    
-    .action-buttons {
-        flex-direction: column;
-    }
-    
-    .flash-messages {
-        left: 10px;
-        right: 10px;
-        max-width: none;
-    }
-    
-    .profile-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .error-code {
-        font-size: 4rem;
-    }
-    
     .error-title {
         font-size: 1.5rem;
     }
@@ -1668,27 +1684,64 @@ body.dark-mode .profile-header {
     .nav-menu {
         gap: 1rem;
     }
+    
+    .features-modern {
+        padding: 2rem 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .user-info-card {
+        padding: 1.5rem;
+    }
 }
 
-@media (max-width: 480px) {
-    .hero-modern {
-        padding: 2rem 0;
-        min-height: 400px;
+    @media (max-width: 480px) {
+        .hero-modern {
+            padding: 2rem 0;
+            min-height: 400px;
+        }
+        
+        .hero-content-modern {
+            padding: 1rem;
+        }
+        
+        .hero-title-modern {
+            font-size: 1.5rem;
+        }
+        
+        .btn-modern {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .hero-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+        
+        .user-info-card {
+            padding: 1rem;
+        }
+        
+        .stat-card {
+            padding: 1rem;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+        
+        .nav-menu a {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
     }
-    
-    .hero-content-modern {
-        padding: 1rem;
-    }
-    
-    .hero-title-modern {
-        font-size: 1.5rem;
-    }
-    
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-    }
-    
     .flash-messages {
         width: calc(100% - 40px);
         right: 20px;
