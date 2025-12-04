@@ -48,15 +48,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav" role="menubar">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.index') }}">Главная</a>
+                <ul class="navbar-nav me-auto" role="menu">
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="{{ url_for('main.index') }}" role="menuitem">Главная</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.about') }}">О нас</a>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="{{ url_for('main.about') }}" role="menuitem">О нас</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.contact') }}">Контакты</a>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="{{ url_for('main.contact') }}" role="menuitem">Контакты</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
