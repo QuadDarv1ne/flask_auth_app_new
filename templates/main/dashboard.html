@@ -35,64 +35,90 @@
 
 <div class="features-modern">
     <div class="container">
-        <div class="user-info-card" style="background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-            <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; justify-content: center;">
-                <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; flex-shrink: 0;">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div style="text-align: left;">
-                    <h2 style="font-size: 2rem; margin-bottom: 1rem;">{{ user.username }}</h2>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #64748b;">
-                            <i class="fas fa-envelope" style="color: #667eea;"></i>
-                            <span>{{ user.email }}</span>
+        <div class="card shadow-lg mb-4">
+            <div class="card-body text-center">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-lg-3 mb-4 mb-lg-0">
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px;">
+                            <i class="fas fa-user text-white" style="font-size: 3rem;"></i>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #64748b;">
-                            <i class="fas fa-calendar-alt" style="color: #667eea;"></i>
-                            <span>Регистрация: {{ user.created_at.strftime('%d.%m.%Y') }}</span>
+                    </div>
+                    <div class="col-lg-9 text-lg-start text-center">
+                        <h2 class="mb-4">{{ user.username }}</h2>
+                        <div class="row justify-content-center justify-content-lg-start">
+                            <div class="col-md-6 mb-2">
+                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                    <i class="fas fa-envelope text-primary me-2"></i>
+                                    <span>{{ user.email }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                    <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                    <span>Регистрация: {{ user.created_at.strftime('%d.%m.%Y') }}</span>
+                                </div>
+                            </div>
+                            {% if user.last_login %}
+                            <div class="col-md-6 mb-2">
+                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                    <i class="fas fa-clock text-primary me-2"></i>
+                                    <span>Последний вход: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
-                        {% if user.last_login %}
-                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #64748b;">
-                            <i class="fas fa-clock" style="color: #667eea;"></i>
-                            <span>Последний вход: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</span>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="stats-grid" style="margin-top: 3rem;">
-            <div class="stat-card" style="background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
-                <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
-                    <i class="fas fa-shield-alt"></i>
+        <div class="row g-4 mt-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center shadow-sm hover-card">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-shield-alt text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Статус аккаунта</h5>
+                        <p class="card-text fw-bold text-success fs-4 mb-0">Активен</p>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #1e293b;">Статус аккаунта</h3>
-                <p style="font-size: 1.5rem; font-weight: bold; color: #10b981;">Активен</p>
             </div>
 
-            <div class="stat-card" style="background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.2s ease;" onclick="showToast('Ваш ID пользователя: {{ user.id }}')">
-                <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
-                    <i class="fas fa-id-badge"></i>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center shadow-sm hover-card" onclick="showToast('Ваш ID пользователя: {{ user.id }}')" style="cursor: pointer;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-id-badge text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">ID пользователя</h5>
+                        <p class="card-text fw-bold fs-4 mb-0">#{{ user.id }}</p>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #1e293b;">ID пользователя</h3>
-                <p style="font-size: 1.5rem; font-weight: bold; color: #1e293b;">#{{ user.id }}</p>
             </div>
 
-            <div class="stat-card" style="background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.2s ease;" onclick="showToast('Ваш аккаунт защищен двухфакторной аутентификацией')">
-                <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
-                    <i class="fas fa-lock"></i>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center shadow-sm hover-card" onclick="showToast('Ваш аккаунт защищен двухфакторной аутентификацией')" style="cursor: pointer;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-lock text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Безопасность</h5>
+                        <p class="card-text fw-bold text-primary fs-4 mb-0">Защищен</p>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #1e293b;">Безопасность</h3>
-                <p style="font-size: 1.5rem; font-weight: bold; color: #667eea;">Защищен</p>
             </div>
 
-            <div class="stat-card" style="background: white; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
-                <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
-                    <i class="fas fa-cog"></i>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center shadow-sm hover-card">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-cog text-white" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="card-title">Настройки</h5>
+                        <a href="{{ url_for('main.profile') }}" class="btn btn-primary mt-2">Управление</a>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #1e293b;">Настройки</h3>
-                <a href="{{ url_for('main.profile') }}" style="display: inline-block; padding: 0.5rem 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; margin-top: 0.5rem;">Управление</a>
             </div>
         </div>
 
