@@ -1,13 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from models import User, db
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, TwoFactorVerifyForm
 from utils.email import send_confirmation_email
 from utils.decorators import check_confirmed
 from utils.metrics import increment_failed_logins, increment_successful_registrations
 from app import limiter
 import secrets
+import pyotp
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -75,7 +76,16 @@ def login():
                 flash('Пожалуйста, подтвердите ваш email перед входом.', 'warning')
                 return redirect(url_for('auth.unconfirmed'))
             
+            # Check if 2FA is enabled
+            if user.is_2fa_enabled:
+                # Store user ID in session for 2FA verification
+                session['2fa_user_id'] = user.id
+                session['2fa_remember_me'] = form.remember_me.data
+                return redirect(url_for('auth.verify_2fa'))
+            
+            # Regular login without 2FA
             login_user(user, remember=form.remember_me.data)
+            user.update_last_login()
             next_page = request.args.get('next')
             flash('Вы успешно вошли в систему!', 'success')
             return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))
@@ -85,6 +95,42 @@ def login():
             flash('Неверный email или пароль.', 'danger')
     
     return render_template('auth/login.html', form=form)
+
+@auth_bp.route('/verify-2fa', methods=['GET', 'POST'])
+def verify_2fa():
+    """Проверка 2FA кода"""
+    # Check if user ID is in session
+    user_id = session.get('2fa_user_id')
+    if not user_id:
+        flash('Необходимо сначала войти в систему.', 'warning')
+        return redirect(url_for('auth.login'))
+    
+    user = User.query.get(user_id)
+    if not user:
+        session.pop('2fa_user_id', None)
+        flash('Ошибка аутентификации.', 'danger')
+        return redirect(url_for('auth.login'))
+    
+    form = TwoFactorVerifyForm()
+    if form.validate_on_submit():
+        # Verify TOTP token
+        if user.verify_totp(str(form.token.data)):
+            # Login user
+            remember_me = session.get('2fa_remember_me', False)
+            login_user(user, remember=remember_me)
+            user.update_last_login()
+            
+            # Clear session
+            session.pop('2fa_user_id', None)
+            session.pop('2fa_remember_me', None)
+            
+            next_page = request.args.get('next')
+            flash('Вы успешно вошли в систему!', 'success')
+            return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))
+        else:
+            flash('Неверный код 2FA.', 'danger')
+    
+    return render_template('auth/verify_2fa.html', form=form, user=user)
 
 @auth_bp.route('/logout')
 @login_required
@@ -116,7 +162,6 @@ def unconfirmed():
 
 @auth_bp.route('/resend-confirmation')
 @login_required
-@limiter.limit("3 per minute")
 def resend_confirmation():
     """Повторная отправка email с подтверждением"""
     if current_user.email_confirmed:

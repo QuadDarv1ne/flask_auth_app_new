@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}2FA Verification - Flask Auth App{% endblock %}
+
+{% block content %}
+<div class="hero-modern">
+    <div class="hero-background">
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="hero-content-modern" style="grid-template-columns: 1fr;">
+            <div class="hero-text" style="text-align: center;">
+                <div class="hero-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    Двухфакторная аутентификация
+                </div>
+                
+                <h1 class="hero-title-modern">
+                    <span class="gradient-text">Введите</span> код 2FA<br>
+                    для завершения входа
+                </h1>
+                
+                <p class="hero-description">
+                    Откройте ваше приложение аутентификации и введите 6-значный код
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-modern">
+    <div class="container">
+        <div class="auth-card" style="max-width: 500px; margin: 0 auto;">
+            <form method="POST" action="{{ url_for('auth.verify_2fa') }}" class="auth-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label for="token">
+                        <i class="fas fa-key"></i> {{ form.token.label.text }}
+                    </label>
+                    {{ form.token(class="form-control", placeholder="Введите 6-значный код", autocomplete="off") }}
+                    {% if form.token.errors %}
+                        <div class="form-errors">
+                            {% for error in form.token.errors %}
+                                <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.submit(class="btn-modern btn-primary-modern btn-block") }}
+                </div>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Не можете получить код? <a href="{{ url_for('auth.login') }}">Вернуться к входу</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-focus on the token input field
+    const tokenInput = document.getElementById('token');
+    if (tokenInput) {
+        tokenInput.focus();
+        
+        // Auto-submit when 6 digits are entered
+        tokenInput.addEventListener('input', function() {
+            if (this.value.length === 6) {
+                // Submit the form automatically
+                this.form.submit();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

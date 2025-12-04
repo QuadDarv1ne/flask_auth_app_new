@@ -145,9 +145,22 @@
             <!-- Статистика аккаунта -->
             <div class="profile-card">
                 <div class="card-header">
-                    <h2><i class="fas fa-chart-line"></i> Статистика аккаунта</h2>
+                    <h2><i class="fas fa-shield-alt"></i> Безопасность</h2>
                 </div>
                 <div class="stats-list">
+                    <div class="stat-item">
+                        <div class="stat-label">
+                            <i class="fas fa-key"></i> Двухфакторная аутентификация
+                        </div>
+                        <div class="stat-value">
+                            {% if user.is_2fa_enabled %}
+                                <span class="badge badge-success">Включена</span>
+                            {% else %}
+                                <span class="badge badge-warning">Отключена</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
                     <div class="stat-item">
                         <div class="stat-label">
                             <i class="fas fa-calendar-plus"></i> Дата регистрации
@@ -176,15 +189,27 @@
                             #{{ user.id }}
                         </div>
                     </div>
-                    
-                    <div class="stat-item">
-                        <div class="stat-label">
-                            <i class="fas fa-shield-alt"></i> Статус безопасности
-                        </div>
-                        <div class="stat-value secure-badge">
-                            <i class="fas fa-check-circle"></i> Защищен
-                        </div>
-                    </div>
+                </div>
+                
+                <!-- 2FA Controls -->
+                <div class="form-group mt-3">
+                    {% if user.is_2fa_enabled %}
+                        <form method="POST" action="{{ url_for('main.profile') }}" style="display: inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" name="disable_2fa" class="btn btn-danger btn-block" 
+                                    onclick="return confirm('Вы уверены, что хотите отключить 2FA?')">
+                                <i class="fas fa-times-circle"></i> Отключить 2FA
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('main.profile') }}" style="display: inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {{ twofa_form.hidden_tag() }}
+                            <button type="submit" name="enable_2fa" class="btn btn-success btn-block">
+                                <i class="fas fa-shield-alt"></i> Включить 2FA
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

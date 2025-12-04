@@ -1,10 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, session
 from flask_login import login_required, current_user
 from app import db
-from forms import UpdateProfileForm, ChangePasswordForm, ContactForm
+from forms import UpdateProfileForm, ChangePasswordForm, ContactForm, TwoFactorSetupForm, TwoFactorVerifyForm
 from utils.logging import log_user_action
 import os
 from werkzeug.utils import secure_filename
+import pyqrcode
+import io
+import base64
 
 main_bp = Blueprint('main', __name__)
 
@@ -25,6 +28,7 @@ def profile():
     """Страница профиля пользователя"""
     profile_form = UpdateProfileForm(current_user.username, current_user.email)
     password_form = ChangePasswordForm()
+    twofa_form = TwoFactorSetupForm()
     
     # Handle profile form submission (when accessed via GET or POST but not from password form)
     if request.method == 'POST' and 'submit' in request.form and profile_form.validate_on_submit():
@@ -63,6 +67,28 @@ def profile():
         flash('Ваш профиль успешно обновлен!', 'success')
         return redirect(url_for('main.profile'))
     
+    # Handle 2FA setup form
+    if request.method == 'POST' and 'enable_2fa' in request.form and twofa_form.validate_on_submit():
+        if not current_user.is_2fa_enabled:
+            # Enable 2FA and generate secret
+            secret = current_user.enable_2fa()
+            # Generate QR code for setup
+            qr_uri = current_user.get_totp_uri()
+            qr_code = pyqrcode.create(qr_uri)
+            buffer = io.BytesIO()
+            qr_code.svg(buffer, scale=4)
+            qr_code_svg = buffer.getvalue().decode('utf-8')
+            session['qr_code'] = qr_code_svg
+            session['totp_secret'] = secret
+            return redirect(url_for('main.setup_2fa'))
+    
+    # Handle 2FA disable form
+    if request.method == 'POST' and 'disable_2fa' in request.form:
+        current_user.disable_2fa()
+        db.session.commit()
+        flash('Двухфакторная аутентификация отключена.', 'success')
+        return redirect(url_for('main.profile'))
+    
     # Populate forms with current data
     profile_form.username.data = current_user.username
     profile_form.email.data = current_user.email
@@ -71,7 +97,39 @@ def profile():
                          title='Профиль',
                          user=current_user,
                          profile_form=profile_form,
-                         password_form=password_form)
+                         password_form=password_form,
+                         twofa_form=twofa_form)
+
+@main_bp.route('/setup-2fa', methods=['GET', 'POST'])
+@login_required
+def setup_2fa():
+    """Настройка 2FA"""
+    # Check if we have QR code in session
+    qr_code = session.get('qr_code')
+    totp_secret = session.get('totp_secret')
+    
+    if not qr_code or not totp_secret:
+        flash('Необходимо сначала начать настройку 2FA.', 'warning')
+        return redirect(url_for('main.profile'))
+    
+    form = TwoFactorVerifyForm()
+    if form.validate_on_submit():
+        # Verify the token
+        if current_user.verify_totp(str(form.token.data)):
+            flash('Двухфакторная аутентификация успешно настроена!', 'success')
+            # Clear session data
+            session.pop('qr_code', None)
+            session.pop('totp_secret', None)
+            return redirect(url_for('main.profile'))
+        else:
+            flash('Неверный код. Попробуйте еще раз.', 'danger')
+    
+    return render_template('main/setup_2fa.html', 
+                         title='Настройка 2FA',
+                         user=current_user,
+                         form=form,
+                         qr_code=qr_code,
+                         totp_secret=totp_secret)
 
 @main_bp.route('/change-password', methods=['POST'])
 @login_required
