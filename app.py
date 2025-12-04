@@ -8,6 +8,7 @@ from config import Config
 from utils.logging import setup_logging
 from utils.email import mail
 from utils.metrics import metrics_endpoint, record_request_metrics
+from flask_minify import Minify
 import os
 import time
 
@@ -20,6 +21,9 @@ limiter = Limiter(
     default_limits=["200 per day", "50 per hour"],
     storage_uri="memory://"
 )
+
+# Минификатор для оптимизации статических файлов
+minify = Minify()
 
 def create_app(config_class=Config):
     """Фабрика приложения Flask"""
@@ -38,6 +42,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    minify.init_app(app)
     
     # Configure rate limiter storage
     if hasattr(config_class, 'RATELIMIT_STORAGE_URL'):

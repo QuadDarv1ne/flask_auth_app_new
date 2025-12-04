@@ -50,3 +50,12 @@ class Config:
     
     # Rate limiting configuration
     RATELIMIT_STORAGE_URL = os.environ.get('REDIS_URL') or 'memory://'
+    
+    # Настройки кэширования статических файлов
+    SEND_FILE_MAX_AGE_DEFAULT = 31536000  # 1 год для статических файлов
+    
+    # Настройки минификации
+    MINIFY_CACHE = True
+    MINIFY_HTML = True
+    MINIFY_CSS = True
+    MINIFY_JS = True

@@ -21,3 +21,9 @@ pyotp==2.9.0
 PyQRCode==1.2.1
 pypng==0.20220715.0
 redis==5.0.1
+
+# Минификация и оптимизация
+flask-minify==0.41
+webassets==2.0
+jsmin==3.0.1
+cssmin==0.2.0
