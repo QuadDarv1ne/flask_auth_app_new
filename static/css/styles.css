@@ -1425,7 +1425,26 @@ body.dark-mode .stat-value {
     .testimonials-grid {
         grid-template-columns: 1fr;
     }
-
+    
+    /* Улучшенная адаптивность для мобильных */
+    .container {
+        padding: 0 15px;
+    }
+    
+    /* Улучшенная навигация для мобильных */
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Улучшенные формы для мобильных */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    /* Улучшенные карточки для мобильных */
+    .card {
+        margin-bottom: 1rem;
+    }
 /* ===== LARGE MOBILE DEVICES (576px and up) ===== */
 @media (min-width: 576px) and (max-width: 768px) {
     .dashboard-grid {
@@ -1812,6 +1831,88 @@ body.dark-mode .profile-header {
     .action-buttons a {
         width: 100%;
         text-align: center;
+    }
+    
+    /* Улучшенная адаптивность для очень маленьких экранов */
+    .container {
+        padding: 0 10px;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .form-control {
+        padding: 0.5rem;
+        font-size: 16px; /* Предотвращает зум на iOS */
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    h1, h2, h3 {
+        font-size: 1.2em;
+    }
+    
+    /* Улучшенная доступность для сенсорных устройств */
+    a, button, .form-control {
+        min-height: 44px; /* Минимальный размер для легкого нажатия */
+        min-width: 44px;
+    }
+}
+
+/* ===== LARGE MOBILE DEVICES (481px - 768px) ===== */
+@media (min-width: 481px) and (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .card {
+        padding: 1.5rem;
+    }
+    
+    /* Улучшенная сетка для планшетов */
+    .row-cols-lg-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .row-cols-xl-5 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ===== TABLET DEVICES (769px - 1024px) ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    /* Улучшенная сетка для больших планшетов */
+    .row-cols-xl-5 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (pointer: coarse) {
+    /* Увеличенные области касания для сенсорных устройств */
+    .nav-link {
+        padding: 0.75rem 1rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1.5rem;
+    }
+    
+    /* Улучшенные эффекты для сенсорных взаимодействий */
+    .btn:active {
+        transform: scale(0.98);
+    }
+    
+    .card:hover {
+        transform: none; /* Отключаем hover эффекты на сенсорных устройствах */
     }
 }
 
@@ -2281,4 +2382,71 @@ body.dark-mode .badge-danger {
 
 .mt-3 {
     margin-top: 1rem;
+}
+
+/* ===== LARGE MOBILE DEVICES (481px - 768px) ===== */
+@media (min-width: 481px) and (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .card {
+        padding: 1.5rem;
+    }
+    
+    /* Улучшенная сетка для планшетов */
+    .row-cols-lg-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .row-cols-xl-5 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ===== TABLET DEVICES (769px - 1024px) ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    /* Улучшенная сетка для больших планшетов */
+    .row-cols-xl-5 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (pointer: coarse) {
+    /* Увеличенные области касания для сенсорных устройств */
+    .nav-link {
+        padding: 0.75rem 1rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1.5rem;
+    }
+    
+    /* Улучшенные эффекты для сенсорных взаимодействий */
+    .btn:active {
+        transform: scale(0.98);
+    }
+    
+    .card:hover {
+        transform: none; /* Отключаем hover эффекты на сенсорных устройствах */
+    }
+}
+
+/* ===== HIGH RESOLUTION DISPLAYS ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Улучшенные иконки для retina дисплеев */
+    .icon {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Улучшенные границы для retina дисплеев */
+    .card, .btn, .form-control {
+        border-width: 0.5px;
+    }
 }
