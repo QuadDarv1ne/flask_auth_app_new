@@ -171,6 +171,7 @@ body.dark-mode .navbar-toggler-icon {
 body.dark-mode .navbar {
     background: rgba(30, 41, 59, 0.95);
     box-shadow: var(--dark-shadow-sm);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--dark-border-color);
 }
@@ -1582,6 +1583,7 @@ body.dark-mode .stat-value {
     align-items: center;
     gap: 0.5rem;
     background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     padding: 0.5rem 1rem;
     border-radius: 25px;
@@ -1619,6 +1621,7 @@ body.dark-mode .stat-value {
     align-items: center;
     gap: 0.5rem;
     background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     padding: 0.75rem 1.5rem;
     border-radius: 25px;
@@ -1650,6 +1653,7 @@ body.dark-mode .stat-value {
 .btn-secondary-modern {
     background: rgba(255, 255, 255, 0.2);
     color: white;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 

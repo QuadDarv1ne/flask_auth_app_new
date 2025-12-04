@@ -319,83 +319,106 @@
 })();
 
 // ===== LOADING STATE FOR BUTTONS =====
-const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"]');
-submitButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-        const form = this.closest('form');
+(function() {
+    'use strict';
+    
+    // Use event delegation for better performance
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button[type="submit"], input[type="submit"]');
+        if (!button) return;
+        
+        const form = button.closest('form');
         if (form && form.checkValidity()) {
-            this.disabled = true;
-            const originalText = this.value || this.textContent;
+            button.disabled = true;
+            const originalText = button.value || button.textContent;
             
-            if (this.tagName === 'INPUT') {
-                this.value = 'Загрузка...';
+            if (button.tagName === 'INPUT') {
+                button.value = 'Загрузка...';
             } else {
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
             }
+            
+            // Store original text for later restoration
+            button.dataset.originalText = originalText;
             
             // Re-enable after 3 seconds (fallback)
             setTimeout(() => {
-                this.disabled = false;
-                if (this.tagName === 'INPUT') {
-                    this.value = originalText;
+                button.disabled = false;
+                if (button.tagName === 'INPUT') {
+                    button.value = button.dataset.originalText || originalText;
                 } else {
-                    this.textContent = originalText;
+                    button.textContent = button.dataset.originalText || originalText;
                 }
             }, 3000);
         }
     });
-});
+})();
 
 // ===== STATS COUNTER ANIMATION =====
-const statNumbers = document.querySelectorAll('.stat-number');
-const countUpOptions = {
-    duration: 2000,
-    useEasing: true
-};
-
-const countUp = (element, target) => {
-    const start = 0;
-    const duration = 2000;
-    const startTime = performance.now();
+(function() {
+    'use strict';
     
-    const updateCount = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+    const statNumbers = document.querySelectorAll('.stat-number');
+    
+    // Check if IntersectionObserver is supported
+    if (!('IntersectionObserver' in window)) {
+        // Fallback for older browsers
+        statNumbers.forEach(stat => {
+            const text = stat.textContent.trim();
+            const number = parseInt(text.replace(/[^0-9]/g, ''));
+            if (!isNaN(number)) {
+                stat.textContent = number.toLocaleString();
+            }
+        });
+        return;
+    }
+    
+    const countUp = (element, target) => {
+        const start = 0;
+        const duration = 2000;
+        const startTime = performance.now();
         
-        // Easing function
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const updateCount = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            
+            const current = Math.floor(easeOutQuart * target);
+            element.textContent = current.toLocaleString();
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCount);
+            } else {
+                element.textContent = target.toLocaleString();
+            }
+        };
         
-        const current = Math.floor(easeOutQuart * target);
-        element.textContent = current.toLocaleString();
-        
-        if (progress < 1) {
-            requestAnimationFrame(updateCount);
-        } else {
-            element.textContent = target.toLocaleString();
-        }
+        requestAnimationFrame(updateCount);
     };
     
-    requestAnimationFrame(updateCount);
-};
-
-// Observe stat numbers
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-            entry.target.classList.add('counted');
-            const text = entry.target.textContent.trim();
-            const number = parseInt(text.replace(/[^0-9]/g, ''));
-            
-            if (!isNaN(number)) {
-                countUp(entry.target, number);
+    // Observe stat numbers
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                entry.target.classList.add('counted');
+                const text = entry.target.textContent.trim();
+                const number = parseInt(text.replace(/[^0-9]/g, ''));
+                
+                if (!isNaN(number)) {
+                    countUp(entry.target, number);
+                    // Stop observing after animation
+                    statsObserver.unobserve(entry.target);
+                }
             }
-        }
+        });
+    }, { threshold: 0.5 });
+    
+    statNumbers.forEach(stat => {
+        statsObserver.observe(stat);
     });
-}, { threshold: 0.5 });
-
-statNumbers.forEach(stat => {
-    statsObserver.observe(stat);
-});
+})();
 
 // ===== TOOLTIPS =====
 function initTooltips() {
