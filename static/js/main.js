@@ -393,6 +393,29 @@ function showToast(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
     initEnhancedValidation();
+    
+    // Add loading spinners to form submit buttons
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function() {
+            const submitButton = this.querySelector('button[type="submit"], input[type="submit"]');
+            if (submitButton) {
+                submitButton.classList.add('btn-loading');
+                
+                // Create spinner if it doesn't exist
+                if (!submitButton.querySelector('.loading-spinner')) {
+                    const spinner = document.createElement('span');
+                    spinner.className = 'loading-spinner';
+                    submitButton.insertBefore(spinner, submitButton.firstChild);
+                }
+                
+                // Reset button after 3 seconds (in case form doesn't redirect)
+                setTimeout(() => {
+                    submitButton.classList.remove('btn-loading');
+                }, 3000);
+            }
+        });
+    });
 });
 
 console.log('Flask Auth App - Enhanced UI Loaded ✨');
