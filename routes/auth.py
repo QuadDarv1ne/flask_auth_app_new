@@ -1,150 +1,129 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from urllib.parse import urlparse
-from app import db
-from models import User
+from werkzeug.security import check_password_hash, generate_password_hash
+from models import User, db
 from forms import LoginForm, RegistrationForm
-from utils.logging import log_user_action, log_security_event
 from utils.email import send_confirmation_email
+from utils.decorators import check_confirmed
+from utils.metrics import increment_failed_logins, increment_successful_registrations
+from app import limiter
+import secrets
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
-    """Страница входа в систему"""
-    form = LoginForm()
-    
-    if form.validate_on_submit():
-        # Поиск пользователя в базе данных
-        user = User.query.filter_by(username=form.username.data).first()
-        
-        # Проверка пользователя и пароля
-        if user is None or not user.check_password(form.password.data):
-            log_security_event(
-                'failed_login',
-                username=form.username.data,
-                ip_address=request.remote_addr,
-                details='Invalid username or password'
-            )
-            flash('Неверное имя пользователя или пароль', 'error')
-            return redirect(url_for('auth.login'))
-        
-        # Вход пользователя
-        login_user(user, remember=form.remember_me.data)
-        user.update_last_login()
-        
-        # Логирование успешного входа
-        log_user_action(
-            user.username,
-            'logged_in',
-            f'IP: {request.remote_addr}, Remember: {form.remember_me.data}'
-        )
-        
-        flash(f'Добро пожаловать, {user.username}!', 'success')
-        
-        # Перенаправление на страницу, с которой пользователь пришел
-        next_page = request.args.get('next')
-        if not next_page or urlparse(next_page).netloc != '':
-            next_page = url_for('main.dashboard')
-        
-        return redirect(next_page)
-    
-    return render_template('auth/login.html', title='Вход', form=form)
-
 @auth_bp.route('/register', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
+@limiter.limit("50 per hour")
 def register():
-    """Страница регистрации нового пользователя"""
-    form = RegistrationForm()
+    """Регистрация нового пользователя"""
+    if current_user.is_authenticated:
+        return redirect(url_for('main.dashboard'))
     
+    form = RegistrationForm()
     if form.validate_on_submit():
+        # Проверка существующего пользователя
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash('Пользователь с таким email уже существует.', 'danger')
+            return render_template('auth/register.html', form=form)
+        
         # Создание нового пользователя
         user = User(
             username=form.username.data,
-            email=form.email.data
+            email=form.email.data,
+            password=generate_password_hash(form.password.data),
+            is_admin=False,
+            email_confirmed=False
         )
-        user.set_password(form.password.data)
         
-        # Генерация токена подтверждения email
+        # Генерация токена подтверждения
         token = user.generate_email_confirm_token()
         
-        # Сохранение в базу данных
-        db.session.add(user)
-        db.session.commit()
-        
-        # Отправка email с ссылкой подтверждения
-        send_confirmation_email(user, token)
-        
-        # Логирование регистрации
-        log_user_action(
-            user.username, 
-            'registered', 
-            f'Email: {user.email}, IP: {request.remote_addr}'
-        )
-        
-        flash('Поздравляем! Вы успешно зарегистрированы. Пожалуйста, проверьте ваш email для подтверждения учетной записи.', 'success')
-        return redirect(url_for('auth.login'))
+        try:
+            db.session.add(user)
+            db.session.commit()
+            
+            # Отправка email с подтверждением
+            send_confirmation_email(user.email, token)
+            
+            # Увеличение счетчика успешных регистраций
+            increment_successful_registrations()
+            
+            flash('Регистрация успешна! Проверьте ваш email для подтверждения.', 'success')
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f'Registration error: {e}')
+            flash('Ошибка регистрации. Попробуйте еще раз.', 'danger')
     
-    return render_template('auth/register.html', title='Регистрация', form=form)
+    return render_template('auth/register.html', form=form)
 
-@auth_bp.route('/confirm/<token>')
-def confirm_email(token):
-    """Подтверждение email адреса по токену"""
-    user = User.query.filter_by(email_confirm_token=token).first()
-    
-    if user is None:
-        flash('Недействительная ссылка подтверждения.', 'error')
-        return redirect(url_for('main.index'))
-    
-    user.confirm_email()
-    
-    log_user_action(
-        user.username,
-        'email_confirmed',
-        f'Email: {user.email} confirmed via token'
-    )
-    
-    flash('Ваш email адрес успешно подтвержден!', 'success')
-    return redirect(url_for('auth.login'))
-
-@auth_bp.route('/unconfirmed')
-@login_required
-def unconfirmed():
-    """Страница для неподтвержденных пользователей"""
-    if current_user.email_confirmed:
+@auth_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
+@limiter.limit("100 per hour")
+def login():
+    """Аутентификация пользователя"""
+    if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
     
-    return render_template('auth/unconfirmed.html', title='Подтверждение email')
-
-@auth_bp.route('/resend-confirmation')
-@login_required
-def resend_confirmation():
-    """Повторная отправка email подтверждения"""
-    if current_user.email_confirmed:
-        return redirect(url_for('main.dashboard'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        
+        if user and check_password_hash(user.password, form.password.data):
+            if not user.email_confirmed:
+                flash('Пожалуйста, подтвердите ваш email перед входом.', 'warning')
+                return redirect(url_for('auth.unconfirmed'))
+            
+            login_user(user, remember=form.remember_me.data)
+            next_page = request.args.get('next')
+            flash('Вы успешно вошли в систему!', 'success')
+            return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))
+        else:
+            # Увеличение счетчика неудачных попыток входа
+            increment_failed_logins()
+            flash('Неверный email или пароль.', 'danger')
     
-    # Генерация нового токена
-    token = current_user.generate_email_confirm_token()
-    db.session.commit()
-    
-    # Отправка email с ссылкой подтверждения
-    send_confirmation_email(current_user, token)
-    
-    log_user_action(
-        current_user.username,
-        'confirmation_resent',
-        f'Confirmation email resent to {current_user.email}'
-    )
-    
-    flash('Новое письмо с подтверждением отправлено на ваш email.', 'info')
-    return redirect(url_for('auth.unconfirmed'))
+    return render_template('auth/login.html', form=form)
 
 @auth_bp.route('/logout')
 @login_required
 def logout():
     """Выход из системы"""
-    username = current_user.username if hasattr(current_user, 'username') else 'Unknown'
-    log_user_action(username, 'logged_out', f'IP: {request.remote_addr}')
-    
     logout_user()
-    flash('Вы вышли из системы', 'info')
-    return redirect(url_for('main.index'))
+    flash('Вы вышли из системы.', 'info')
+    return redirect(url_for('auth.login'))
+
+@auth_bp.route('/confirm/<token>')
+def confirm_email(token):
+    """Подтверждение email по токену"""
+    user = User.query.filter_by(email_confirm_token=token).first()
+    
+    if not user:
+        flash('Неверный токен подтверждения.', 'danger')
+        return redirect(url_for('auth.login'))
+    
+    user.confirm_email()
+    flash('Ваш email успешно подтвержден!', 'success')
+    return redirect(url_for('auth.login'))
+
+@auth_bp.route('/unconfirmed')
+@login_required
+@check_confirmed
+def unconfirmed():
+    """Страница для неподтвержденных пользователей"""
+    return render_template('auth/unconfirmed.html')
+
+@auth_bp.route('/resend-confirmation')
+@login_required
+@limiter.limit("3 per minute")
+def resend_confirmation():
+    """Повторная отправка email с подтверждением"""
+    if current_user.email_confirmed:
+        flash('Ваш email уже подтвержден.', 'info')
+        return redirect(url_for('main.dashboard'))
+    
+    token = current_user.generate_email_confirm_token()
+    send_confirmation_email(current_user.email, token)
+    flash('Новое письмо с подтверждением отправлено на ваш email.', 'success')
+    return redirect(url_for('auth.unconfirmed'))

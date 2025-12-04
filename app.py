@@ -1,15 +1,23 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from config import Config
 from utils.logging import setup_logging
 from utils.email import mail
+from utils.metrics import metrics_endpoint, record_request_metrics
+import time
 
 # Инициализация расширений
 db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 def create_app(config_class=Config):
     """Фабрика приложения Flask"""
@@ -20,6 +28,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    limiter.init_app(app)
     
     # Настройка логирования
     setup_logging(app)
@@ -36,12 +45,36 @@ def create_app(config_class=Config):
     def load_user(user_id):
         return User.query.get(int(user_id))
     
+    # Middleware для сбора метрик
+    @app.before_request
+    def before_request():
+        g.start_time = time.time()
+    
+    @app.after_request
+    def after_request(response):
+        if hasattr(g, 'start_time'):
+            endpoint = request.endpoint or 'unknown'
+            record_request_metrics(g.start_time, endpoint, request.method, response.status_code)
+        return response
+    
     # Регистрация blueprints
     from routes.auth import auth_bp
     from routes.main import main_bp
+    from routes.api import api_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
+    app.register_blueprint(api_bp)
+    
+    # Endpoint для метрик Prometheus
+    @app.route('/metrics')
+    def metrics():
+        return metrics_endpoint()
+    
+    # Health check endpoint
+    @app.route('/health')
+    def health_check():
+        return {'status': 'healthy', 'timestamp': time.time()}, 200
     
     # Обработчики ошибок
     @app.errorhandler(404)
@@ -73,5 +106,8 @@ if __name__ == '__main__':
     print("="*60)
     print("📍 Откройте браузер: http://localhost:5000")
     print("🔐 Зарегистрируйтесь или войдите в систему")
+    print("📊 Метрики Prometheus: http://localhost:5000/metrics")
+    print("🏥 Health check: http://localhost:5000/health")
+    print("📚 API документация: http://localhost:5000/api/docs/")
     print("="*60 + "\n")
     app.run(debug=True, host='0.0.0.0', port=5000)

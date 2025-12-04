@@ -55,3 +55,14 @@ docker rm flask_auth
 1. **admin** / admin123
 2. **testuser** / test123
 3. **demo** / demo123
+
+## Безопасность
+
+Новый Dockerfile использует многоэтапную сборку и запускает приложение под непривилегированным пользователем для повышения безопасности.
+
+## Мониторинг
+
+Приложение включает следующие возможности мониторинга:
+
+- **Health check**: http://localhost:5000/health
+- **Prometheus metrics**: http://localhost:5000/metrics
