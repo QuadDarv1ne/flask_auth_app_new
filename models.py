@@ -14,6 +14,10 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     last_login = db.Column(db.DateTime)
+    # Added fields for admin_required and check_confirmed decorators
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
+    email_confirm_token = db.Column(db.String(100), unique=True, nullable=True)
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -29,6 +33,18 @@ class User(UserMixin, db.Model):
     def update_last_login(self):
         """Обновление времени последнего входа"""
         self.last_login = datetime.now(timezone.utc)
+        db.session.commit()
+    
+    def generate_email_confirm_token(self):
+        """Генерация токена для подтверждения email"""
+        import secrets
+        self.email_confirm_token = secrets.token_urlsafe(32)
+        return self.email_confirm_token
+    
+    def confirm_email(self):
+        """Подтверждение email адреса"""
+        self.email_confirmed = True
+        self.email_confirm_token = None
         db.session.commit()
 
 @login_manager.user_loader

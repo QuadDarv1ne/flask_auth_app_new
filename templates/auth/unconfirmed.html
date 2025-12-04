@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Flask Auth App{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="container">
+        <div class="auth-card">
+            <div class="card-header">
+                <h1>
+                    <i class="fas fa-envelope"></i>
+                    Подтверждение email
+                </h1>
+            </div>
+            
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-circle"></i>
+                <strong>Внимание!</strong> Ваш email адрес еще не подтвержден.
+            </div>
+            
+            <p class="text-center">
+                Для полноценного использования приложения, пожалуйста, подтвердите ваш email адрес.
+                Мы отправили письмо с инструкциями на адрес: 
+                <strong>{{ current_user.email }}</strong>
+            </p>
+            
+            <div class="auth-actions">
+                <a href="{{ url_for('auth.resend_confirmation') }}" class="btn btn-primary btn-block">
+                    <i class="fas fa-paper-plane"></i>
+                    Повторно отправить письмо
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-block">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Выйти из аккаунта
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

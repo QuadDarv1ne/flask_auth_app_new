@@ -45,24 +45,24 @@ def send_email(subject, recipients, text_body, html_body, sender=None):
     Thread(target=send_async_email, args=(app, msg)).start()
 
 
-def send_verification_email(user, token):
+def send_confirmation_email(user, token):
     """
     Отправка письма для подтверждения email
     
     Args:
         user: Объект пользователя
-        token: Токен для верификации
+        token: Токен для подтверждения email
     """
     subject = "Подтвердите ваш email - Flask Auth App"
     
     # Генерируем ссылку для подтверждения
-    verification_url = f"{current_app.config.get('APP_URL')}/verify-email/{token}"
+    confirmation_url = f"{current_app.config.get('APP_URL')}/confirm/{token}"
     
     text_body = f"""
     Здравствуйте, {user.username}!
     
     Для активации вашей учетной записи, пожалуйста, перейдите по ссылке:
-    {verification_url}
+    {confirmation_url}
     
     Если вы не регистрировались на нашем сайте, проигнорируйте это письмо.
     
@@ -70,11 +70,15 @@ def send_verification_email(user, token):
     Команда Flask Auth App
     """
     
-    html_body = render_template(
-        'email/verify_email.html',
-        user=user,
-        verification_url=verification_url
-    )
+    try:
+        html_body = render_template(
+            'email/verify_email.html',
+            user=user,
+            confirmation_url=confirmation_url
+        )
+    except Exception:
+        # Если HTML шаблон не найден, используем только текст
+        html_body = None
     
     send_email(subject, [user.email], text_body, html_body)
 
@@ -103,11 +107,15 @@ def send_password_reset_email(user, token):
     Команда Flask Auth App
     """
     
-    html_body = render_template(
-        'email/reset_password.html',
-        user=user,
-        reset_url=reset_url
-    )
+    try:
+        html_body = render_template(
+            'email/reset_password.html',
+            user=user,
+            reset_url=reset_url
+        )
+    except Exception:
+        # Если HTML шаблон не найден, используем только текст
+        html_body = None
     
     send_email(subject, [user.email], text_body, html_body)
 
@@ -132,9 +140,13 @@ def send_welcome_email(user):
     Команда Flask Auth App
     """
     
-    html_body = render_template(
-        'email/welcome.html',
-        user=user
-    )
+    try:
+        html_body = render_template(
+            'email/welcome.html',
+            user=user
+        )
+    except Exception:
+        # Если HTML шаблон не найден, используем только текст
+        html_body = None
     
     send_email(subject, [user.email], text_body, html_body)

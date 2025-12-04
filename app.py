@@ -25,6 +25,13 @@ def create_app(config_class=Config):
     login_manager.login_message = 'Пожалуйста, войдите для доступа к этой странице.'
     login_manager.login_message_category = 'info'
     
+    # Загрузчик пользователя для Flask-Login
+    from models import User
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+    
     # Регистрация blueprints
     from routes.auth import auth_bp
     from routes.main import main_bp

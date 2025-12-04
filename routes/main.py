@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
 from forms import UpdateProfileForm, ChangePasswordForm
@@ -24,7 +24,8 @@ def profile():
     profile_form = UpdateProfileForm(current_user.username, current_user.email)
     password_form = ChangePasswordForm()
     
-    if profile_form.validate_on_submit():
+    # Handle profile form submission (when accessed via GET or POST but not from password form)
+    if request.endpoint == 'main.profile' and profile_form.validate_on_submit():
         old_username = current_user.username
         current_user.username = profile_form.username.data
         current_user.email = profile_form.email.data
@@ -38,10 +39,8 @@ def profile():
         
         flash('Ваш профиль успешно обновлен!', 'success')
         return redirect(url_for('main.profile'))
-    elif profile_form.is_submitted():
-        flash('Пожалуйста, исправьте ошибки в форме.', 'error')
     
-    # Заполнение формы текущими данными
+    # Populate forms with current data
     profile_form.username.data = current_user.username
     profile_form.email.data = current_user.email
     
@@ -76,5 +75,9 @@ def change_password():
         flash('Пароль успешно изменен!', 'success')
         return redirect(url_for('main.profile'))
     
-    flash('Пожалуйста, исправьте ошибки в форме смены пароля.', 'error')
+    # Handle form validation errors
+    for field, errors in password_form.errors.items():
+        for error in errors:
+            flash(f'{getattr(password_form, field).label.text}: {error}', 'error')
+    
     return redirect(url_for('main.profile'))
