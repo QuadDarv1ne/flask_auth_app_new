@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from app import db
 from forms import UpdateProfileForm, ChangePasswordForm, ContactForm, TwoFactorSetupForm, TwoFactorVerifyForm
 from utils.logging import log_user_action
+from utils.performance import cache_response
 import os
 from werkzeug.utils import secure_filename
 import pyqrcode
@@ -12,6 +13,7 @@ import base64
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
+@cache_response(timeout=300)  # Кэшируем главную страницу на 5 минут
 def index():
     """Главная страница"""
     return render_template('main/index.html', title='Главная')
@@ -164,6 +166,7 @@ def change_password():
     return redirect(url_for('main.profile'))
 
 @main_bp.route('/about')
+@cache_response(timeout=600)  # Кэшируем страницу "О нас" на 10 минут
 def about():
     """Страница О нас"""
     return render_template('main/about.html', title='О нас')

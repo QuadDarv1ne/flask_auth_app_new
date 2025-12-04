@@ -5,7 +5,7 @@ from models import User, db
 from forms import LoginForm, RegistrationForm, TwoFactorVerifyForm
 from utils.email import send_confirmation_email
 from utils.decorators import check_confirmed
-from utils.metrics import increment_failed_logins, increment_successful_registrations
+from utils.metrics import increment_failed_logins, increment_successful_registrations, record_api_call
 from app import limiter
 import secrets
 import pyotp
@@ -17,6 +17,7 @@ auth_bp = Blueprint('auth', __name__)
 @limiter.limit("50 per hour")
 def register():
     """Регистрация нового пользователя"""
+    record_api_call('register', request.method)
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
     
@@ -64,6 +65,7 @@ def register():
 @limiter.limit("100 per hour")
 def login():
     """Аутентификация пользователя"""
+    record_api_call('login', request.method)
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
     

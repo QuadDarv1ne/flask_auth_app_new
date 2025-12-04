@@ -2,22 +2,46 @@
 Утилиты для повышения производительности приложения
 """
 from functools import wraps
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 import hashlib
 import time
+import json
+import pickle
 
 
 # Простой in-memory кэш (для продакшена использовать Redis)
 _cache = {}
 _cache_timestamps = {}
 
+# Попытка импортировать Redis для продакшена
+try:
+    import redis
+    _redis_client = None
+    _redis_available = True
+except ImportError:
+    _redis_client = None
+    _redis_available = False
 
-def cache_response(timeout=300):
+
+def get_redis_client():
+    """Получение клиента Redis"""
+    global _redis_client
+    if _redis_client is None and _redis_available:
+        try:
+            _redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=False)
+            # Проверяем соединение
+            _redis_client.ping()
+        except:
+            _redis_client = None
+    return _redis_client
+
+def cache_response(timeout=300, use_redis=True):
     """
     Декоратор для кэширования ответов
     
     Args:
         timeout: Время жизни кэша в секундах (по умолчанию 5 минут)
+        use_redis: Использовать Redis для кэширования (если доступен)
     """
     def decorator(f):
         @wraps(f)
@@ -27,7 +51,20 @@ def cache_response(timeout=300):
                 f"{request.url}{str(args)}{str(kwargs)}".encode()
             ).hexdigest()
             
-            # Проверяем кэш
+            # Проверяем Redis кэш если доступен
+            if use_redis and _redis_available:
+                redis_client = get_redis_client()
+                if redis_client:
+                    try:
+                        cached_data = redis_client.get(cache_key)
+                        if cached_data:
+                            # Десериализуем данные
+                            return pickle.loads(cached_data)
+                    except Exception as e:
+                        # В случае ошибки Redis, используем in-memory кэш
+                        current_app.logger.warning(f"Redis cache error: {e}")
+            
+            # Проверяем in-memory кэш
             if cache_key in _cache:
                 timestamp = _cache_timestamps.get(cache_key, 0)
                 if time.time() - timestamp < timeout:
@@ -35,6 +72,19 @@ def cache_response(timeout=300):
             
             # Выполняем функцию и кэшируем результат
             response = f(*args, **kwargs)
+            
+            # Сохраняем в Redis если доступен
+            if use_redis and _redis_available:
+                redis_client = get_redis_client()
+                if redis_client:
+                    try:
+                        # Сериализуем данные
+                        serialized_data = pickle.dumps(response)
+                        redis_client.setex(cache_key, timeout, serialized_data)
+                    except Exception as e:
+                        current_app.logger.warning(f"Redis cache set error: {e}")
+            
+            # Сохраняем в in-memory кэш
             _cache[cache_key] = response
             _cache_timestamps[cache_key] = time.time()
             
@@ -52,6 +102,22 @@ def clear_cache(pattern=None):
     """
     global _cache, _cache_timestamps
     
+    # Очистка Redis кэша если доступен
+    if _redis_available:
+        redis_client = get_redis_client()
+        if redis_client:
+            try:
+                if pattern is None:
+                    redis_client.flushdb()
+                else:
+                    # Получаем все ключи по паттерну
+                    keys = redis_client.keys(f"*{pattern}*")
+                    if keys:
+                        redis_client.delete(*keys)
+            except Exception as e:
+                current_app.logger.warning(f"Redis cache clear error: {e}")
+    
+    # Очистка in-memory кэша
     if pattern is None:
         _cache.clear()
         _cache_timestamps.clear()
@@ -150,6 +216,61 @@ class QueryCounter:
         """Получить список всех запросов"""
         return self.queries
 
+
+def cache_data(key, timeout=300, use_redis=True):
+    """
+    Декоратор для кэширования результатов функции
+    
+    Args:
+        key: Ключ кэша
+        timeout: Время жизни кэша в секундах
+        use_redis: Использовать Redis для кэширования (если доступен)
+    """
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Генерируем ключ кэша
+            cache_key = f"data:{key}"
+            
+            # Проверяем Redis кэш если доступен
+            if use_redis and _redis_available:
+                redis_client = get_redis_client()
+                if redis_client:
+                    try:
+                        cached_data = redis_client.get(cache_key)
+                        if cached_data:
+                            # Десериализуем данные
+                            return pickle.loads(cached_data)
+                    except Exception as e:
+                        current_app.logger.warning(f"Redis cache error: {e}")
+            
+            # Проверяем in-memory кэш
+            if cache_key in _cache:
+                timestamp = _cache_timestamps.get(cache_key, 0)
+                if time.time() - timestamp < timeout:
+                    return _cache[cache_key]
+            
+            # Выполняем функцию и кэшируем результат
+            result = f(*args, **kwargs)
+            
+            # Сохраняем в Redis если доступен
+            if use_redis and _redis_available:
+                redis_client = get_redis_client()
+                if redis_client:
+                    try:
+                        # Сериализуем данные
+                        serialized_data = pickle.dumps(result)
+                        redis_client.setex(cache_key, timeout, serialized_data)
+                    except Exception as e:
+                        current_app.logger.warning(f"Redis cache set error: {e}")
+            
+            # Сохраняем в in-memory кэш
+            _cache[cache_key] = result
+            _cache_timestamps[cache_key] = time.time()
+            
+            return result
+        return decorated_function
+    return decorator
 
 def optimize_images(max_width=1920, max_height=1080, quality=85):
     """

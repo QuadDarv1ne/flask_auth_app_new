@@ -58,6 +58,9 @@ def create_app(config_class=Config):
     @app.before_request
     def before_request():
         g.start_time = time.time()
+        endpoint = request.endpoint or 'unknown'
+        from utils.metrics import increment_request_in_progress
+        increment_request_in_progress(request.method, endpoint)
     
     @app.after_request
     def after_request(response):
