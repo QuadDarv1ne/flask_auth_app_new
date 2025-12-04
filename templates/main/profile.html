@@ -8,7 +8,7 @@
         <div class="profile-header">
             <div class="profile-avatar-container">
                 {% if user.get_avatar_url() %}
-                    <img src="{{ user.get_avatar_url() }}" alt="Аватар {{ user.username }}" class="profile-avatar-img">
+                    <img src="{{ user.get_avatar_url() }}" alt="Аватар {{ user.username }}" class="profile-avatar-img" loading="lazy">
                 {% else %}
                     <div class="profile-avatar-placeholder">
                         <i class="fas fa-user"></i>

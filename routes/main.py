@@ -55,8 +55,21 @@ def profile():
                 unique_filename = f"{current_user.id}_{secure_filename(name)}{ext}"
                 filepath = os.path.join(avatar_dir, unique_filename)
                 
-                # Save the file
-                avatar_file.save(filepath)
+                # Read file data for optimization
+                avatar_data = avatar_file.read()
+                
+                # Optimize and resize avatar
+                from utils.image_optimizer import compress_and_resize_avatar
+                optimized_avatar = compress_and_resize_avatar(avatar_data, max_size=200)
+                
+                if optimized_avatar:
+                    # Save the optimized file
+                    with open(filepath, 'wb') as f:
+                        f.write(optimized_avatar)
+                else:
+                    # Fallback to original if optimization fails
+                    avatar_file.seek(0)  # Reset file pointer
+                    avatar_file.save(filepath)
                 
                 # Update user's avatar filename
                 current_user.set_avatar(unique_filename)
