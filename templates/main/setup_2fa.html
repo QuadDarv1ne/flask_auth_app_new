@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Flask Auth App{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="container">
+        <div class="profile-header">
+            <h1>
+                <i class="fas fa-shield-alt"></i>
+                Настройка двухфакторной аутентификации
+            </h1>
+            <p class="subtitle">Следуйте инструкциям для включения 2FA</p>
+        </div>
+
+        <div class="profile-grid">
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-mobile-alt"></i> Шаг 1: Установите приложение аутентификации</h2>
+                </div>
+                <div class="instructions">
+                    <p>Установите одно из следующих приложений на ваш смартфон:</p>
+                    <ul>
+                        <li>Google Authenticator</li>
+                        <li>Microsoft Authenticator</li>
+                        <li>Authy</li>
+                        <li>FreeOTP</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-qrcode"></i> Шаг 2: Отсканируйте QR-код</h2>
+                </div>
+                <div class="qr-code-container">
+                    {{ qr_code|safe }}
+                </div>
+                <div class="manual-setup">
+                    <p>Или введите секрет вручную:</p>
+                    <code>{{ totp_secret }}</code>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-key"></i> Шаг 3: Подтвердите настройку</h2>
+                </div>
+                <form method="POST" action="{{ url_for('main.setup_2fa') }}" class="profile-form">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-group">
+                        <label for="token">
+                            <i class="fas fa-lock"></i> {{ form.token.label.text }}
+                        </label>
+                        {{ form.token(class="form-control", placeholder="Введите 6-значный код", autocomplete="off") }}
+                        {% if form.token.errors %}
+                            <div class="form-errors">
+                                {% for error in form.token.errors %}
+                                    <span class="error-message"><i class="fas fa-exclamation-circle"></i> {{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-primary btn-block") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+            <a href="{{ url_for('main.profile') }}" class="btn-modern btn-secondary-modern">
+                <i class="fas fa-arrow-left"></i> Вернуться в профиль
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.qr-code-container {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.manual-setup {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    text-align: center;
+}
+
+body.dark-mode .manual-setup {
+    background: var(--dark-card-bg);
+}
+
+.instructions ul {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+}
+
+.instructions li {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}
