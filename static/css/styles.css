@@ -48,6 +48,12 @@ body {
 body.dark-mode {
     background: var(--dark-bg-color);
     color: var(--dark-text-primary);
+    animation: darkModeTransition 0.5s ease;
+}
+
+@keyframes darkModeTransition {
+    0% { opacity: 0.8; transform: scale(0.995); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 .container {
