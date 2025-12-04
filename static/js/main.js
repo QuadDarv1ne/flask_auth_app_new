@@ -428,4 +428,19 @@ window.addEventListener('scroll', function() {
     }
 });
 
+// Close Bootstrap collapse when clicking outside
+document.addEventListener('click', function(event) {
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    
+    if (navbarCollapse && navbarCollapse.classList.contains('show') && 
+        !navbarToggler.contains(event.target) && 
+        !navbarCollapse.contains(event.target)) {
+        const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+            toggle: false
+        });
+        bsCollapse.hide();
+    }
+});
+
 console.log('Flask Auth App - Enhanced UI Loaded ✨');
