@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
     
     <!-- PWA Manifest and Icons -->
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
     <link rel="apple-touch-icon" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
     
@@ -47,38 +47,38 @@
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav" role="menubar">
-                <ul class="navbar-nav me-auto" role="menu">
-                    <li class="nav-item" role="none">
-                        <a class="nav-link" href="{{ url_for('main.index') }}" role="menuitem">Главная</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Главная</a>
                     </li>
-                    <li class="nav-item" role="none">
-                        <a class="nav-link" href="{{ url_for('main.about') }}" role="menuitem">О нас</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.about') }}">О нас</a>
                     </li>
-                    <li class="nav-item" role="none">
-                        <a class="nav-link" href="{{ url_for('main.contact') }}" role="menuitem">Контакты</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.contact') }}">Контакты</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav" role="menu">
+                <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
-                        <li class="nav-item" role="none">
-                            <a class="nav-link" href="{{ url_for('main.dashboard') }}" role="menuitem">Личный кабинет</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">Личный кабинет</a>
                         </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link" href="{{ url_for('main.profile') }}" role="menuitem">Профиль</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.profile') }}">Профиль</a>
                         </li>
-                        <li class="nav-item" role="none">
-                            <a class="btn btn-outline-danger" href="{{ url_for('auth.logout') }}" role="menuitem">Выйти</a>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
                         </li>
                     {% else %}
-                        <li class="nav-item" role="none">
-                            <a class="btn btn-primary me-2" href="{{ url_for('auth.login') }}" role="menuitem">Войти</a>
+                        <li class="nav-item">
+                            <a class="btn btn-primary me-2" href="{{ url_for('auth.login') }}">Войти</a>
                         </li>
-                        <li class="nav-item" role="none">
-                            <a class="btn btn-outline-primary" href="{{ url_for('auth.register') }}" role="menuitem">Регистрация</a>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-primary" href="{{ url_for('auth.register') }}">Регистрация</a>
                         </li>
                     {% endif %}
-                    <li class="nav-item" role="none">
+                    <li class="nav-item">
                         <button class="theme-toggle btn" id="themeToggle" aria-label="Переключить тему">
                             <i class="fas fa-moon"></i>
                         </button>

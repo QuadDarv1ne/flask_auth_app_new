@@ -132,6 +132,7 @@ body.dark-mode .theme-toggle:hover {
     top: 0;
     z-index: 1000;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
     padding-top: 1rem;
@@ -2691,3 +2692,147 @@ body.dark-mode .text-secondary {
 .btn-mt-1 {
     margin-top: 1rem !important;
 }
+
+/* Hero action buttons */
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Hero content grid single column centered */
+.hero-grid-center {
+    grid-template-columns: 1fr;
+    text-align: center;
+}
+
+/* Justify content center */
+.justify-center {
+    justify-content: center;
+}
+
+/* ===== BOOTSTRAP OVERRIDES & ENHANCEMENTS ===== */
+/* Улучшенные кнопки Bootstrap */
+.btn {
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0.5rem 1.5rem;
+}
+
+.btn-primary {
+    background: var(--primary-gradient) !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-primary {
+    color: #667eea !important;
+    border: 2px solid #667eea !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-gradient) !important;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+.btn-outline-danger {
+    color: var(--error-color) !important;
+    border: 2px solid var(--error-color) !important;
+    background: transparent !important;
+}
+
+.btn-outline-danger:hover {
+    background: var(--error-color) !important;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: var(--error-color) !important;
+    border: none !important;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-success {
+    background: var(--success-color) !important;
+    border: none !important;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Улучшенный form-control для темной темы */
+body.dark-mode .form-control {
+    background: var(--dark-card-bg);
+    color: var(--dark-text-primary);
+    border-color: var(--dark-border-color);
+}
+
+body.dark-mode .form-control:focus {
+    background: var(--dark-card-bg);
+    color: var(--dark-text-primary);
+    border-color: #667eea;
+}
+
+/* Улучшенная navbar для темной темы */
+body.dark-mode .navbar-brand {
+    color: var(--dark-text-primary) !important;
+}
+
+/* Улучшенные card компоненты */
+.card {
+    border-radius: 16px;
+    border: none;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+body.dark-mode .card {
+    background: var(--dark-card-bg);
+    box-shadow: var(--dark-shadow-md);
+}
+
+body.dark-mode .card:hover {
+    box-shadow: var(--dark-shadow-lg);
+}
+
+.card-header {
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 16px 16px 0 0 !important;
+    border: none;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+}
+
+/* Адаптивные utility классы */
+@media (max-width: 768px) {
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hero-actions .btn-modern {
+        width: 100%;
+    }
+}
+

@@ -37,7 +37,7 @@
                         Привет, {{ current_user.username }}!
                     </div>
                     
-                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <div class="hero-actions">
                         <a href="{{ url_for('main.dashboard') }}" class="btn-modern btn-primary-modern">
                             <i class="fas fa-tachometer-alt"></i>
                             Личный кабинет
@@ -48,7 +48,7 @@
                         </a>
                     </div>
                 {% else %}
-                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <div class="hero-actions">
                         <a href="{{ url_for('auth.register') }}" class="btn-modern btn-white-modern btn-large">
                             <i class="fas fa-user-plus"></i>
                             Начать бесплатно
