@@ -1,3 +1,25 @@
+// ===== PERFORMANCE UTILITIES =====
+// Debounce function for reducing excessive function calls
+const debounce = (func, delay) => {
+    let timeoutId;
+    return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+};
+
+// Throttle function for rate-limiting function calls
+const throttle = (func, limit) => {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+};
+
 // ===== AUTO-HIDE FLASH MESSAGES =====
 (function() {
     'use strict';

@@ -5,18 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#667eea">
-    <meta name="description" content="Безопасная система аутентификации на Flask">
+    <meta name="description" content="Безопасная система аутентификации на Flask с двухфакторной аутентификацией, защитой данных и современным интерфейсом">
+    <meta name="keywords" content="аутентификация, безопасность, Flask, авторизация, 2FA">
+    <meta name="author" content="Flask Auth App">
+    <meta name="language" content="Russian">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Flask Auth App - Безопасная аутентификация">
+    <meta property="og:description" content="Современная система авторизации с поддержкой двухфакторной аутентификации">
+    <meta property="og:site_name" content="Flask Auth App">
+    <meta property="og:locale" content="ru_RU">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Flask Auth App">
+    <meta name="twitter:description" content="Безопасная система аутентификации на Flask">
     
     <!-- PWA Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Flask Auth App">
     <meta name="application-name" content="Flask Auth App">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <title>{% block title %}Flask Auth App{% endblock %}</title>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    <link rel="preload" href="{{ url_for('static', filename='css/styles.css') }}" as="style">
+    
+    <!-- Preload fonts for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
@@ -27,6 +50,7 @@
     <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
     <link rel="apple-touch-icon" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     
     <!-- Prefetch DNS for external domains -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
@@ -35,6 +59,9 @@
     <!-- Preconnect for external domains -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Performance: defer non-critical resources -->
+    <link rel="preload" href="{{ url_for('static', filename='js/main.js') }}" as="script">
 </head>
 <body>
     <!-- Навигация -->

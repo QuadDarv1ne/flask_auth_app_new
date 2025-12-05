@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/private/
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: http://localhost:5000/static/sitemap.xml
+
+# Allow search engines to crawl static resources
+Allow: *.js
+Allow: *.css
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.png
+Allow: *.gif
+Allow: *.svg
+Allow: *.webp
