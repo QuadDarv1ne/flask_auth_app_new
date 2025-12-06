@@ -13,6 +13,10 @@ class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     WTF_CSRF_ENABLED = False
     SECRET_KEY = 'test-secret-key'
+    
+    # Disable Redis for testing
+    REDIS_URL = 'redis://localhost:6379/0'
+    CACHE_TYPE = 'null'
 
 
 @pytest.fixture
