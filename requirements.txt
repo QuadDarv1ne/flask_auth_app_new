@@ -22,6 +22,9 @@ PyQRCode==1.2.1
 pypng==0.20220715.0
 redis==5.0.1
 flask_minify
+flask-socketio==5.3.4
+python-socketio==5.10.0
+eventlet==0.33.3
 
 # Минификация и оптимизация
 flask-minify==0.41
