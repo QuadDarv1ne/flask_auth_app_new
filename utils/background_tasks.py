@@ -7,7 +7,6 @@ import logging
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import Callable, Any, Optional
-from dataclasses import dataclass
 import uuid
 
 logger = logging.getLogger('flask_auth_app.background_tasks')
