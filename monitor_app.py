@@ -59,7 +59,7 @@ class AppMonitor:
     def print_status(self, status: str, is_healthy: bool = True):
         """Печать статуса"""
         color = GREEN if is_healthy else RED
-        symbol = "✓" if is_healthy else "✗"
+        symbol = "[OK]" if is_healthy else "[ERROR]"
         print(f"{color}{symbol} {status}{RESET}")
     
     def format_percentage(self, value: float, threshold: float = None) -> str:
@@ -83,7 +83,7 @@ class AppMonitor:
             try:
                 response = self.session.get(self.base_url, timeout=2)
                 if response.status_code == 200:
-                    self.print_status("✓ Приложение доступно", True)
+                    self.print_status("[OK] Приложение доступно", True)
                 else:
                     self.print_status(f"Приложение вернуло код {response.status_code}", False)
             except:

@@ -66,19 +66,19 @@ def create_app(config_name=None):
         cache.init_app(app)
     except Exception as e:
         app_logger = logging.getLogger('flask_auth_app')
-        app_logger.warning(f"⚠ Cache initialization warning: {e}")
+        app_logger.warning(f"[WARN] Cache initialization warning: {e}")
     
     try:
         email_service.init_app(app)
     except Exception as e:
         app_logger = logging.getLogger('flask_auth_app')
-        app_logger.warning(f"⚠ Email service initialization warning: {e}")
+        app_logger.warning(f"[WARN] Email service initialization warning: {e}")
     
     try:
         rate_limit.init_app(app)
     except Exception as e:
         app_logger = logging.getLogger('flask_auth_app')
-        app_logger.warning(f"⚠ Rate limit initialization warning: {e}")
+        app_logger.warning(f"[WARN] Rate limit initialization warning: {e}")
     
     socketio.init_app(app, cors_allowed_origins="*", async_mode='threading')
     
@@ -315,8 +315,19 @@ def create_app(config_name=None):
             instance_dir = os.path.join(app.root_path, 'instance')
             os.makedirs(instance_dir, exist_ok=True)
             
+            # Check if database file is accessible
+            db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+            if db_uri.startswith('sqlite:///') and not db_uri.startswith('sqlite:///:memory:'):
+                db_path = db_uri.replace('sqlite:///', '')
+                if not os.path.isabs(db_path):
+                    db_path = os.path.join(instance_dir, db_path)
+                # Ensure database file can be created
+                db_dir = os.path.dirname(db_path)
+                if db_dir:
+                    os.makedirs(db_dir, exist_ok=True)
+            
             db.create_all()
-            app_logger.info("✓ Database tables created")
+            app_logger.info("[OK] Database tables created")
         except Exception as e:
             app_logger.warning(f"Database initialization warning: {e}")
             # Try to create database with a fallback approach
@@ -325,7 +336,13 @@ def create_app(config_name=None):
                 if app.config.get('TESTING', False):
                     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
                     db.create_all()
-                    app_logger.info("✓ Fallback database created in memory")
+                    app_logger.info("[OK] Fallback database created in memory")
+                else:
+                    # Try to create database in instance directory with absolute path
+                    instance_db_path = os.path.join(instance_dir, 'app.db')
+                    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{instance_db_path}'
+                    db.create_all()
+                    app_logger.info("[OK] Database created in instance directory")
             except Exception as fallback_e:
                 app_logger.error(f"Critical database initialization error: {fallback_e}")
     

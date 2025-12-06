@@ -5,7 +5,7 @@ from flask_mail import Mail, Message
 from flask import current_app, render_template_string
 import logging
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger('flask_auth_app.email')
 
@@ -111,7 +111,7 @@ class EmailService:
                     <p>Если у вас возникнут вопросы, не стесняйтесь обращаться к нам.</p>
                 </div>
                 <div class="footer">
-                    <p>&copy; {datetime.utcnow().year} Flask Auth App. Все права защищены.</p>
+                    <p>&copy; {datetime.now(timezone.utc).year} Flask Auth App. Все права защищены.</p>
                 </div>
             </div>
         </body>
@@ -179,7 +179,7 @@ class EmailService:
                     </p>
                 </div>
                 <div class="footer">
-                    <p>&copy; {datetime.utcnow().year} Flask Auth App. Все права защищены.</p>
+                    <p>&copy; {datetime.now(timezone.utc).year} Flask Auth App. Все права защищены.</p>
                 </div>
             </div>
         </body>
@@ -237,7 +237,7 @@ class EmailService:
                     <div class="alert">
                         <strong>Тип события:</strong> {alert_type}<br>
                         <strong>Детали:</strong> {details}<br>
-                        <strong>Время:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+                        <strong>Время:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC
                     </div>
                     <p>Если это были вы, можете игнорировать это сообщение.</p>
                     <p>Если это были не вы, немедленно:</p>
@@ -248,7 +248,7 @@ class EmailService:
                     </ul>
                 </div>
                 <div class="footer">
-                    <p>&copy; {datetime.utcnow().year} Flask Auth App. Все права защищены.</p>
+                    <p>&copy; {datetime.now(timezone.utc).year} Flask Auth App. Все права защищены.</p>
                 </div>
             </div>
         </body>
@@ -264,7 +264,7 @@ class EmailService:
         
         Тип события: {alert_type}
         Детали: {details}
-        Время: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+        Время: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC
         
         Если это были вы, можете игнорировать это сообщение.
         
@@ -316,7 +316,7 @@ class EmailService:
                     <p><strong>Важно:</strong> Сохраните резервные коды в надёжном месте!</p>
                 </div>
                 <div class="footer">
-                    <p>&copy; {datetime.utcnow().year} Flask Auth App. Все права защищены.</p>
+                    <p>&copy; {datetime.now(timezone.utc).year} Flask Auth App. Все права защищены.</p>
                 </div>
             </div>
         </body>

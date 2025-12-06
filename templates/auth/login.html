@@ -40,14 +40,14 @@
                 {{ form.hidden_tag() }}
                 
                 <div class="mb-3">
-                    <label for="username" class="form-label" aria-describedby="username-help">
-                        <i class="fas fa-user"></i> {{ form.username.label.text }}
+                    <label for="email" class="form-label" aria-describedby="email-help">
+                        <i class="fas fa-envelope"></i> {{ form.email.label.text }}
                     </label>
-                    {{ form.username(class="form-control", placeholder="Введите имя пользователя", **{'aria-required': 'true', 'aria-invalid': 'false' if not form.username.errors else 'true'}) }}
-                    <div id="username-help" class="sr-only">Введите ваше имя пользователя</div>
-                    {% if form.username.errors %}
+                    {{ form.email(class="form-control", placeholder="Введите email", **{'aria-required': 'true', 'aria-invalid': 'false' if not form.email.errors else 'true'}) }}
+                    <div id="email-help" class="sr-only">Введите ваш email</div>
+                    {% if form.email.errors %}
                         <div class="form-errors" role="alert" aria-live="assertive">
-                            {% for error in form.username.errors %}
+                            {% for error in form.email.errors %}
                                 <span class="error-message"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> {{ error }}</span>
                             {% endfor %}
                         </div>

@@ -19,13 +19,13 @@ class Colors:
     BOLD = '\033[1m'
     
     @staticmethod
-    def success(text): return f"{Colors.GREEN}{Colors.BOLD}✓ {text}{Colors.RESET}"
+    def success(text): return f"{Colors.GREEN}{Colors.BOLD}[OK] {text}{Colors.RESET}"
     @staticmethod
-    def warning(text): return f"{Colors.YELLOW}⚠ {text}{Colors.RESET}"
+    def warning(text): return f"{Colors.YELLOW}[WARN] {text}{Colors.RESET}"
     @staticmethod
-    def error(text): return f"{Colors.RED}✗ {text}{Colors.RESET}"
+    def error(text): return f"{Colors.RED}[ERROR] {text}{Colors.RESET}"
     @staticmethod
-    def info(text): return f"{Colors.BLUE}ℹ {text}{Colors.RESET}"
+    def info(text): return f"{Colors.BLUE}[INFO] {text}{Colors.RESET}"
 
 
 def print_header(title, level=1):
@@ -61,9 +61,9 @@ def generate_report():
     status_data = {
         "Сервер": "127.0.0.1:5000",
         "Режим": "Development",
-        "Debug Mode": "Включен ✓",
-        "Hot Reload": "Включен ✓",
-        "SocketIO": "Активен ✓",
+        "Debug Mode": "Включен [OK]",
+        "Hot Reload": "Включен [OK]",
+        "SocketIO": "Активен [OK]",
     }
     
     for key, value in status_data.items():
@@ -73,19 +73,19 @@ def generate_report():
     print_header("🔧 КОМПОНЕНТЫ", 2)
     
     components = {
-        "Flask": f"{Colors.success('✓ 3.0.0')}",
-        "SQLAlchemy": f"{Colors.success('✓ 3.1.1')}",
-        "Flask-Login": f"{Colors.success('✓ 0.6.3')}",
-        "Flask-SocketIO": f"{Colors.success('✓ 5.3.4')}",
-        "Redis Cache": f"{Colors.warning('⚠ Недоступен')}",
-        "Flask-Limiter": f"{Colors.success('✓ 3.5.0 (Memory storage)')}",
+        "Flask": f"{Colors.success('[OK] 3.0.0')}",
+        "SQLAlchemy": f"{Colors.success('[OK] 3.1.1')}",
+        "Flask-Login": f"{Colors.success('[OK] 0.6.3')}",
+        "Flask-SocketIO": f"{Colors.success('[OK] 5.3.4')}",
+        "Redis Cache": f"{Colors.warning('[WARN] Недоступен')}",
+        "Flask-Limiter": f"{Colors.success('[OK] 3.5.0 (Memory storage)')}",
     }
     
     for component, status in components.items():
         print(f"  {component:.<40} {status}")
     
     # Warnings
-    print_header("⚠️ ПРЕДУПРЕЖДЕНИЯ", 2)
+    print_header("[WARN] ПРЕДУПРЕЖДЕНИЯ", 2)
     
     warnings = [
         "Redis недоступен - использует встроенное хранилище",
@@ -115,7 +115,7 @@ def generate_report():
     ]
     
     for feature, enabled in monitoring:
-        status = Colors.success("✓") if enabled else Colors.error("✗")
+        status = Colors.success("[OK]") if enabled else Colors.error("[ERROR]")
         print(f"  {status} {feature}")
     
     # Рекомендации
@@ -213,11 +213,11 @@ def generate_report():
     print_header("✅ СТАТУС ПРИЛОЖЕНИЯ", 1)
     
     print(f"{Colors.success('Приложение успешно запущено и работает!')}\n")
-    print(f"  • Веб-сервер: {Colors.GREEN}✓ Активен{Colors.RESET}")
-    print(f"  • Система мониторинга: {Colors.GREEN}✓ Активна{Colors.RESET}")
-    print(f"  • Обработчики ошибок: {Colors.GREEN}✓ Настроены{Colors.RESET}")
-    print(f"  • Security headers: {Colors.GREEN}✓ Включены{Colors.RESET}")
-    print(f"  • Rate limiting: {Colors.GREEN}✓ Работает{Colors.RESET}")
+    print(f"  • Веб-сервер: {Colors.GREEN}[OK] Активен{Colors.RESET}")
+    print(f"  • Система мониторинга: {Colors.GREEN}[OK] Активна{Colors.RESET}")
+    print(f"  • Обработчики ошибок: {Colors.GREEN}[OK] Настроены{Colors.RESET}")
+    print(f"  • Security headers: {Colors.GREEN}[OK] Включены{Colors.RESET}")
+    print(f"  • Rate limiting: {Colors.GREEN}[OK] Работает{Colors.RESET}")
     
     print(f"\n{Colors.info('Приложение готово к тестированию!')}\n")
     print(f"  Откройте браузер: {Colors.CYAN}http://localhost:5000{Colors.RESET}\n")

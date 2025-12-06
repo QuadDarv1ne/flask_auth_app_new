@@ -51,7 +51,7 @@ def make_shell_context():
 def init_db():
     """Инициализация базы данных"""
     db.create_all()
-    print('✓ Database initialized')
+    print('[OK] Database initialized')
 
 @app.cli.command()
 def create_admin():
@@ -64,7 +64,7 @@ def create_admin():
     
     # Проверка существования пользователя
     if User.query.filter_by(username=username).first():
-        print('✗ User already exists')
+        print('[ERROR] User already exists')
         return
     
     # Создание администратора
@@ -79,7 +79,7 @@ def create_admin():
     db.session.add(admin)
     db.session.commit()
     
-    print(f'✓ Admin user created: {username}')
+    print(f'[OK] Admin user created: {username}')
 
 @app.cli.command()
 def clear_cache():

@@ -4,7 +4,7 @@ Advanced Performance Monitoring - Real-time dashboards, alerts
 import time
 import logging
 from typing import Dict, List, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 import threading
 
@@ -28,7 +28,7 @@ class PerformanceMetricsCollector:
         """Записать метрику"""
         with self.lock:
             metric_entry = {
-                'timestamp': datetime.utcnow(),
+                'timestamp': datetime.now(timezone.utc),
                 'value': value,
                 'tags': tags or {}
             }
@@ -40,7 +40,7 @@ class PerformanceMetricsCollector:
             if metric_name not in self.metrics:
                 return {}
             
-            cutoff_time = datetime.utcnow() - timedelta(seconds=time_window)
+            cutoff_time = datetime.now(timezone.utc) - timedelta(seconds=time_window)
             recent_metrics = [
                 m for m in self.metrics[metric_name]
                 if m['timestamp'] > cutoff_time
@@ -74,7 +74,7 @@ class PerformanceMetricsCollector:
                     'metric': metric_name,
                     'threshold': threshold,
                     'current': stats['avg'],
-                    'timestamp': datetime.utcnow()
+                    'timestamp': datetime.now(timezone.utc)
                 })
         
         return violations
@@ -103,7 +103,7 @@ class PerformanceMetricsCollector:
     
     def cleanup_old_metrics(self, retention_hours: int = 24):
         """Удалить старые метрики"""
-        cutoff_time = datetime.utcnow() - timedelta(hours=retention_hours)
+        cutoff_time = datetime.now(timezone.utc) - timedelta(hours=retention_hours)
         
         with self.lock:
             for metric_name in self.metrics:
@@ -216,7 +216,7 @@ class DashboardData:
     def get_dashboard_data(self) -> Dict:
         """Получить все данные для дашборда"""
         return {
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'metrics': self.metrics.get_all_metrics_summary(),
             'active_alerts': self.alerts.get_active_alerts(),
             'recent_alerts': self.alerts.get_recent_alerts(limit=20),

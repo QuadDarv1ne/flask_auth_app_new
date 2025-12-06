@@ -4,7 +4,7 @@
 import time
 import psutil
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 from functools import wraps
 from flask import request, g
@@ -58,7 +58,7 @@ class MetricsCollector:
         if duration > 0.1:
             self.db_query_stats['slow_queries'].append({
                 'duration': duration,
-                'timestamp': datetime.utcnow()
+                'timestamp': datetime.now(timezone.utc)
             })
             
             # Храним только последние 100 медленных запросов

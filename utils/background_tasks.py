@@ -4,7 +4,7 @@ Background Tasks & Job Queue - Celery alternative using SQLAlchemy
 import json
 import time
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Callable, Any, Optional
 import uuid
@@ -89,8 +89,8 @@ class TaskQueue:
             kwargs=json.dumps(kwargs),
             status=TaskStatus.PENDING.value,
             priority=priority.value,
-            scheduled_at=scheduled_at or datetime.utcnow(),
-            created_at=datetime.utcnow()
+            scheduled_at=scheduled_at or datetime.now(timezone.utc),
+            created_at=datetime.now(timezone.utc)
         )
         
         self.db.session.add(task)
@@ -106,7 +106,7 @@ class TaskQueue:
         task = BackgroundTask.query.filter_by(
             status=TaskStatus.PENDING.value
         ).filter(
-            BackgroundTask.scheduled_at <= datetime.utcnow()
+            BackgroundTask.scheduled_at <= datetime.now(timezone.utc)
         ).order_by(
             BackgroundTask.priority.desc(),
             BackgroundTask.created_at.asc()
@@ -126,7 +126,7 @@ class TaskQueue:
         try:
             # Обновляем статус на RUNNING
             task.status = TaskStatus.RUNNING.value
-            task.started_at = datetime.utcnow()
+            task.started_at = datetime.now(timezone.utc)
             self.db.session.commit()
             
             # Получаем функцию
