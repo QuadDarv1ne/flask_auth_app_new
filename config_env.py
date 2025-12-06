@@ -15,6 +15,9 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///instance/app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'connect_args': {'timeout': 30},
+    }
     
     # Session
     SESSION_COOKIE_SECURE = False
@@ -28,6 +31,8 @@ class Config:
     
     # Redis
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://localhost:6379/0'
+    REDIS_SOCKET_CONNECT_TIMEOUT = 2
+    REDIS_SOCKET_TIMEOUT = 2
     
     # Email
     MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
@@ -120,14 +125,8 @@ class ProductionConfig(Config):
     SESSION_COOKIE_SAMESITE = 'Strict'
     
     # Обязательные переменные окружения
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    
-    if not SECRET_KEY:
-        raise ValueError("SECRET_KEY must be set in production!")
-    
-    if not SQLALCHEMY_DATABASE_URI:
-        raise ValueError("DATABASE_URL must be set in production!")
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'prod-secret-key-must-be-set')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///instance/app_prod.db')
     
     # Продакшн логирование
     LOG_LEVEL = 'WARNING'

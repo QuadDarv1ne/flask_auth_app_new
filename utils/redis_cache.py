@@ -22,19 +22,24 @@ class RedisCache:
     def init_app(self, app):
         """Инициализация Redis из конфига приложения."""
         redis_url = app.config.get('REDIS_URL', 'redis://localhost:6379/0')
+        timeout = app.config.get('REDIS_SOCKET_CONNECT_TIMEOUT', 2)
         
         try:
             self.redis_client = redis.from_url(
                 redis_url,
                 decode_responses=False,
-                socket_connect_timeout=2,
-                socket_timeout=2
+                socket_connect_timeout=timeout,
+                socket_timeout=timeout,
+                retry_on_timeout=True
             )
             # Проверка соединения
             self.redis_client.ping()
-            logger.info(f"Redis connected: {redis_url}")
+            logger.info(f"✓ Redis connected: {redis_url}")
+        except redis.ConnectionError as e:
+            logger.warning(f"⚠ Redis connection failed (will use memory cache): {e}")
+            self.redis_client = None
         except Exception as e:
-            logger.warning(f"Redis connection failed: {e}")
+            logger.warning(f"⚠ Redis initialization error: {e}")
             self.redis_client = None
     
     def is_available(self) -> bool:

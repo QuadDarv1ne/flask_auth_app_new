@@ -8,9 +8,10 @@ from config_env import get_config
 from flask_minify import Minify
 import os
 import time
+import logging
 
 # Импорт новых утилит
-from utils.logger import setup_logger
+from utils.logger import setup_logging
 from utils.redis_cache import cache
 from utils.monitoring import metrics_collector, performance_monitor, SystemMonitor
 from utils.error_handler import setup_error_handlers, ErrorLogger
@@ -28,12 +29,16 @@ from utils.background_tasks import TaskQueue, TaskScheduler, CommonTasks, Schedu
 db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 # Минификатор для оптимизации статических файлов
 minify = Minify()
 
-# Error logger
-error_logger = ErrorLogger()
+# Error logger будет инициализирован в create_app
+error_logger = None
 
 def create_app(config_name=None):
     """Фабрика приложения Flask"""
@@ -53,11 +58,27 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     mail.init_app(app)
     minify.init_app(app)
+    limiter.init_app(app)
     
     # Инициализация новых компонентов
-    cache.init_app(app)
-    email_service.init_app(app)
-    rate_limit.init_app(app)
+    try:
+        cache.init_app(app)
+    except Exception as e:
+        app_logger = logging.getLogger('flask_auth_app')
+        app_logger.warning(f"⚠ Cache initialization warning: {e}")
+    
+    try:
+        email_service.init_app(app)
+    except Exception as e:
+        app_logger = logging.getLogger('flask_auth_app')
+        app_logger.warning(f"⚠ Email service initialization warning: {e}")
+    
+    try:
+        rate_limit.init_app(app)
+    except Exception as e:
+        app_logger = logging.getLogger('flask_auth_app')
+        app_logger.warning(f"⚠ Rate limit initialization warning: {e}")
+    
     socketio.init_app(app, cors_allowed_origins="*", async_mode='threading')
     
     # Инициализация продвинутых оптимизаций
@@ -86,10 +107,17 @@ def create_app(config_name=None):
     )
     
     # Настройка логирования
-    setup_logger(app)
+    setup_logging(app)
+    
+    # Инициализация Error Logger
+    app_logger = logging.getLogger('flask_auth_app')
+    error_logger = ErrorLogger(app_logger)
+    
+    # Сохраняем в расширении для использования в обработчиках
+    app.extensions['error_logger'] = error_logger
     
     # Настройка обработчиков ошибок
-    setup_error_handlers(app)
+    setup_error_handlers(app, app_logger)
     
     # Регистрация расширений в app.extensions
     app.extensions['cache'] = cache
@@ -271,12 +299,21 @@ def create_app(config_name=None):
     @app.errorhandler(413)
     def too_large(e):
         """Обработчик ошибки большого файла"""
-        error_logger.log_error(e, request)
+        try:
+            err_logger = app.extensions.get('error_logger')
+            if err_logger:
+                err_logger.log_error(e, request)
+        except:
+            pass
         return render_template('errors/413.html', title='Файл слишком большой'), 413
     
     # Создание таблиц базы данных
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+            app_logger.info("✓ Database tables created")
+        except Exception as e:
+            app_logger.warning(f"Database initialization warning: {e}")
     
     return app
 

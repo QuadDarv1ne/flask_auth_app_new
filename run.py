@@ -1,13 +1,40 @@
 """
-Точка входа в приложение
-Запускает Flask приложение с SocketIO поддержкой
+Flask Auth App - Главная точка входа
+
+Запускает приложение в режиме разработки с поддержкой:
+- Hot reload и debug mode
+- WebSocket (SocketIO)
+- Автоматическая инициализация БД
+- Performance мониторинг
+- CLI команды для управления приложением
+
+В продакшене используется Gunicorn с конфигурацией из gunicorn_config.py
 """
 import os
+import sys
+import logging
+from pathlib import Path
+
+# Добавляем корневую директорию в path
+sys.path.insert(0, str(Path(__file__).parent))
+
 from app import create_app, db, socketio
 from models import User
+from utils.logger import setup_logging
+
+# Инициализация логирования будет в main()
+logger = None
+
+# Определяем окружение
+FLASK_ENV = os.getenv('FLASK_ENV', 'development')
+DEBUG = FLASK_ENV == 'development'
+PORT = int(os.getenv('PORT', 5000))
+HOST = os.getenv('HOST', '0.0.0.0' if not DEBUG else '127.0.0.1')
 
 # Создание приложения
-app = create_app(os.getenv('FLASK_ENV', 'development'))
+app = create_app(FLASK_ENV)
+logger = logging.getLogger(__name__)
+logger.info(f"Created Flask app in {FLASK_ENV} mode")
 
 # Shell context для flask shell
 @app.shell_context_processor
@@ -190,12 +217,38 @@ def capacity_planning():
         print(f"  CPU Cores: {pred['cpu_cores']}, Memory: {pred['memory_mb']}MB, Storage: {pred['storage_gb']}GB")
 
 
+def main():
+    """Точка входа приложения"""
+    try:
+        # Инициализация БД если необходимо
+        with app.app_context():
+            if not app.config.get('SQLALCHEMY_DATABASE_URI', '').endswith(':memory:'):
+                if not Path('instance').exists():
+                    logger.info("Initializing database...")
+                    db.create_all()
+                    logger.info("✓ Database initialized")
+        
+        logger.info(f"Starting Flask app on {HOST}:{PORT}")
+        logger.info(f"Environment: {FLASK_ENV}")
+        logger.info(f"Debug mode: {DEBUG}")
+        
+        # Запуск с SocketIO
+        socketio.run(
+            app,
+            host=HOST,
+            port=PORT,
+            debug=DEBUG,
+            use_reloader=DEBUG,
+            log_output=DEBUG
+        )
+    
+    except KeyboardInterrupt:
+        logger.info("Application interrupted by user")
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"Failed to start application: {e}", exc_info=True)
+        sys.exit(1)
+
+
 if __name__ == '__main__':
-    # Запуск с SocketIO
-    # В продакшене использовать gunicorn с eventlet worker
-    socketio.run(
-        app,
-        host='0.0.0.0',
-        port=int(os.getenv('PORT', 5000)),
-        debug=app.config.get('DEBUG', False)
-    )
+    main()

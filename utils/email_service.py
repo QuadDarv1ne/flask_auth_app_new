@@ -21,7 +21,12 @@ class EmailService:
     
     def init_app(self, app):
         """Инициализация с приложением Flask."""
-        mail.init_app(app)
+        try:
+            mail.init_app(app)
+        except Exception as e:
+            import logging
+            logger = logging.getLogger('flask_auth_app.email')
+            logger.warning(f"⚠ Email service initialization warning: {e}")
     
     @staticmethod
     def send_email(
