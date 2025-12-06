@@ -143,7 +143,7 @@
     {% endwith %}
 
     <!-- Основной контент -->
-    <main class="main-content">
+    <main class="main-content" role="main">
         {% block content %}{% endblock %}
     </main>
 
@@ -441,6 +441,29 @@
                 
                 strengthLabel.textContent = label;
             }
+        });
+        
+        // Form submission with loading states
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    // Add loading state to form
+                    this.classList.add('form-submitting');
+                    
+                    // Add loading state to submit buttons
+                    const submitButtons = this.querySelectorAll('button[type="submit"]');
+                    submitButtons.forEach(button => {
+                        button.classList.add('btn-loading');
+                        
+                        // Change button text if it has a btn-text element
+                        const btnText = button.querySelector('.btn-text');
+                        if (btnText) {
+                            btnText.textContent = 'Обработка...';
+                        }
+                    });
+                });
+            });
         });
     </script>
     <!-- Bootstrap JS -->

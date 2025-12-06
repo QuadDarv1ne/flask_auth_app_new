@@ -43,7 +43,7 @@
                     <label for="token">
                         <i class="fas fa-key"></i> {{ form.token.label.text }}
                     </label>
-                    {{ form.token(class="form-control", placeholder="Введите 6-значный код", autocomplete="off") }}
+                    {{ form.token(class="form-control text-center", placeholder="Введите 6-значный код", autocomplete="off", maxlength="6") }}
                     {% if form.token.errors %}
                         <div class="form-errors">
                             {% for error in form.token.errors %}

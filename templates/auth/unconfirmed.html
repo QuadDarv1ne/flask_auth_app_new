@@ -3,33 +3,57 @@
 {% block title %}{{ title }} - Flask Auth App{% endblock %}
 
 {% block content %}
-<div class="auth-page">
+<div class="hero-modern">
+    <div class="hero-background">
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+    
     <div class="container">
-        <div class="auth-card">
-            <div class="card-header">
-                <h1>
+        <div class="hero-content-modern">
+            <div class="hero-text">
+                <div class="hero-badge">
                     <i class="fas fa-envelope"></i>
                     Подтверждение email
+                </div>
+                
+                <h1 class="hero-title-modern">
+                    <span class="gradient-text">Подтвердите</span> ваш email<br>
+                    для продолжения
                 </h1>
+                
+                <p class="hero-description">
+                    Для полноценного использования приложения, пожалуйста, подтвердите ваш email адрес.
+                    Мы отправили письмо с инструкциями на адрес: 
+                    <strong>{{ current_user.email }}</strong>
+                </p>
             </div>
-            
+        </div>
+    </div>
+</div>
+
+<div class="features-modern">
+    <div class="container">
+        <div class="auth-card">
             <div class="alert alert-warning">
                 <i class="fas fa-exclamation-circle"></i>
                 <strong>Внимание!</strong> Ваш email адрес еще не подтвержден.
             </div>
             
             <p class="text-center">
-                Для полноценного использования приложения, пожалуйста, подтвердите ваш email адрес.
-                Мы отправили письмо с инструкциями на адрес: 
-                <strong>{{ current_user.email }}</strong>
+                Проверьте вашу почту и нажмите на ссылку подтверждения в письме.
+                Если вы не получили письмо, вы можете запросить новое.
             </p>
             
-            <div class="auth-actions">
-                <a href="{{ url_for('auth.resend_confirmation') }}" class="btn btn-primary btn-block">
+            <div class="button-group-center">
+                <a href="{{ url_for('auth.resend_confirmation') }}" class="btn-modern btn-primary-modern">
                     <i class="fas fa-paper-plane"></i>
                     Повторно отправить письмо
                 </a>
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-block">
+                <a href="{{ url_for('auth.logout') }}" class="btn-modern btn-secondary-modern">
                     <i class="fas fa-sign-out-alt"></i>
                     Выйти из аккаунта
                 </a>
