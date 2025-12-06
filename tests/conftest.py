@@ -22,6 +22,7 @@ class TestConfig(Config):
 @pytest.fixture
 def app():
     """Создание приложения для тестов"""
+    # Pass the TestConfig class directly instead of a string
     app = create_app(TestConfig)
     
     with app.app_context():
