@@ -11,7 +11,13 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-please-change-in-production'
     
     # Конфигурация базы данных
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///instance/app.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
+    # Use absolute path for instance directory
+    import os
+    if not os.environ.get('DATABASE_URL'):
+        instance_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
+        os.makedirs(instance_dir, exist_ok=True)
+        SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(instance_dir, "app.db")}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False  # Установить True для отладки SQL запросов
     SQLALCHEMY_ENGINE_OPTIONS = {
@@ -63,6 +69,19 @@ class Config:
     CACHE_TYPE = 'redis'
     CACHE_REDIS_URL = REDIS_URL
     CACHE_DEFAULT_TIMEOUT = 300
+    
+    # Fallback to memory storage if Redis is not available
+    try:
+        import redis
+        # Try to connect to Redis
+        r = redis.Redis.from_url(REDIS_URL, socket_connect_timeout=REDIS_SOCKET_CONNECT_TIMEOUT, socket_timeout=REDIS_SOCKET_TIMEOUT)
+        r.ping()
+        REDIS_AVAILABLE = True
+    except:
+        REDIS_AVAILABLE = False
+        # Use memory storage as fallback
+        CACHE_TYPE = 'simple'  # Use simple cache instead of Redis
+        RATELIMIT_STORAGE_URL = 'memory://'
     
     # Настройки кэширования статических файлов
     SEND_FILE_MAX_AGE_DEFAULT = 31536000  # 1 год для статических файлов

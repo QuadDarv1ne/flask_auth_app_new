@@ -12,7 +12,13 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///instance/app.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
+    # Use absolute path for instance directory
+    import os
+    if not os.environ.get('DATABASE_URL'):
+        instance_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
+        os.makedirs(instance_dir, exist_ok=True)
+        SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(instance_dir, "app.db")}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_ENGINE_OPTIONS = {
@@ -33,6 +39,20 @@ class Config:
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://localhost:6379/0'
     REDIS_SOCKET_CONNECT_TIMEOUT = 2
     REDIS_SOCKET_TIMEOUT = 2
+    
+    # Fallback to memory storage if Redis is not available
+    import redis
+    try:
+        # Try to connect to Redis
+        r = redis.Redis.from_url(REDIS_URL, socket_connect_timeout=REDIS_SOCKET_CONNECT_TIMEOUT, socket_timeout=REDIS_SOCKET_TIMEOUT)
+        r.ping()
+        REDIS_AVAILABLE = True
+    except:
+        REDIS_AVAILABLE = False
+        # Use memory storage as fallback
+        REDIS_URL = 'redis://localhost:6379/0'  # Still set the URL but it won't be used
+        CACHE_TYPE = 'simple'  # Use simple cache instead of Redis
+        RATELIMIT_STORAGE_URL = 'memory://'
     
     # Email
     MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
