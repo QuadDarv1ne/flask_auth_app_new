@@ -1,0 +1,92 @@
+# Flask Auth App - Pre-commit Hooks Configuration
+# Запуск проверок перед каждым коммитом для обеспечения качества кода
+
+repos:
+  # Общие хуки
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Удаление trailing whitespace
+      - id: end-of-file-fixer
+        name: Проверка конца файла
+      - id: check-yaml
+        name: Проверка YAML файлов
+      - id: check-json
+        name: Проверка JSON файлов
+      - id: check-added-large-files
+        name: Проверка больших файлов
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+        name: Проверка конфликтов слияния
+      - id: detect-private-key
+        name: Обнаружение приватных ключей
+      - id: mixed-line-ending
+        name: Проверка окончаний строк
+
+  # Python форматирование - Black
+  - repo: https://github.com/psf/black
+    rev: 23.11.0
+    hooks:
+      - id: black
+        name: Форматирование кода с Black
+        language_version: python3.11
+        args: ['--line-length=100']
+
+  # Python import сортировка - isort
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: Сортировка imports с isort
+        args: ['--profile=black', '--line-length=100']
+
+  # Flake8 - линтер
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        name: Проверка с Flake8
+        args: ['--max-line-length=100', '--extend-ignore=E203,W503']
+        exclude: ^migrations/
+
+  # Bandit - security scanner
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        name: Security scan с Bandit
+        args: ['-ll', '-i']
+        exclude: ^tests/
+
+  # Проверка requirements.txt
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.2
+    hooks:
+      - id: python-safety-dependencies-check
+        name: Проверка уязвимостей зависимостей
+
+  # Markdown линтер
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.37.0
+    hooks:
+      - id: markdownlint
+        name: Проверка Markdown файлов
+
+  # Secrets detection
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Обнаружение секретов
+        args: ['--baseline', '.secrets.baseline']
+
+# Конфигурация для локального запуска
+default_language_version:
+  python: python3.11
+
+# Отключить автоматическое исправление для некоторых хуков
+fail_fast: false
+
+# Минимальная версия pre-commit
+minimum_pre_commit_version: 2.20.0
