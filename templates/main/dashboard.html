@@ -28,6 +28,17 @@
                 <p class="hero-description">
                     Добро пожаловать в вашу панель управления. Здесь вы можете управлять своим аккаунтом и настройками.
                 </p>
+                
+                <div class="hero-actions">
+                    <a href="{{ url_for('main.profile') }}" class="btn-modern btn-white-modern">
+                        <i class="fas fa-user-cog"></i>
+                        Настройки профиля
+                    </a>
+                    <a href="{{ url_for('main.index') }}" class="btn-modern btn-secondary-modern">
+                        <i class="fas fa-home"></i>
+                        На главную
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -35,94 +46,76 @@
 
 <div class="features-modern">
     <div class="container">
-        <div class="card shadow-lg mb-4">
-            <div class="card-body text-center">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-lg-3 mb-4 mb-lg-0">
-                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px;">
-                            <i class="fas fa-user text-white" style="font-size: 3rem;"></i>
-                        </div>
+        <div class="user-profile-card">
+            <div class="user-avatar">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+            <div class="user-info">
+                <h2 class="user-name">{{ user.username }}</h2>
+                <div class="user-details">
+                    <div class="user-detail-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ user.email }}</span>
                     </div>
-                    <div class="col-lg-9 text-lg-start text-center">
-                        <h2 class="mb-4">{{ user.username }}</h2>
-                        <div class="row justify-content-center justify-content-lg-start">
-                            <div class="col-md-6 mb-2">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fas fa-envelope text-primary me-2"></i>
-                                    <span>{{ user.email }}</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fas fa-calendar-alt text-primary me-2"></i>
-                                    <span>Регистрация: {{ user.created_at.strftime('%d.%m.%Y') }}</span>
-                                </div>
-                            </div>
-                            {% if user.last_login %}
-                            <div class="col-md-6 mb-2">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <i class="fas fa-clock text-primary me-2"></i>
-                                    <span>Последний вход: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</span>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
+                    <div class="user-detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Регистрация: {{ user.created_at.strftime('%d.%m.%Y') }}</span>
                     </div>
+                    {% if user.last_login %}
+                    <div class="user-detail-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Последний вход: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="row g-4 mt-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 text-center shadow-sm hover-card">
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-shield-alt text-white" style="font-size: 2rem;"></i>
-                        </div>
-                        <h5 class="card-title">Статус аккаунта</h5>
-                        <p class="card-text fw-bold text-success fs-4 mb-0">Активен</p>
-                    </div>
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Статус аккаунта</h3>
+                    <p class="stat-value text-success">Активен</p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 text-center shadow-sm hover-card" onclick="showToast('Ваш ID пользователя: {{ user.id }}')" style="cursor: pointer;">
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-id-badge text-white" style="font-size: 2rem;"></i>
-                        </div>
-                        <h5 class="card-title">ID пользователя</h5>
-                        <p class="card-text fw-bold fs-4 mb-0">#{{ user.id }}</p>
-                    </div>
+            <div class="dashboard-stat-card" onclick="showToast('Ваш ID пользователя: {{ user.id }}')" style="cursor: pointer;">
+                <div class="stat-icon">
+                    <i class="fas fa-id-badge"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">ID пользователя</h3>
+                    <p class="stat-value">#{{ user.id }}</p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 text-center shadow-sm hover-card" onclick="showToast('Ваш аккаунт защищен двухфакторной аутентификацией')" style="cursor: pointer;">
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-lock text-white" style="font-size: 2rem;"></i>
-                        </div>
-                        <h5 class="card-title">Безопасность</h5>
-                        <p class="card-text fw-bold text-primary fs-4 mb-0">Защищен</p>
-                    </div>
+            <div class="dashboard-stat-card" onclick="showToast('Ваш аккаунт защищен двухфакторной аутентификацией')" style="cursor: pointer;">
+                <div class="stat-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Безопасность</h3>
+                    <p class="stat-value text-primary">Защищен</p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 text-center shadow-sm hover-card">
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <div class="rounded bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-cog text-white" style="font-size: 2rem;"></i>
-                        </div>
-                        <h5 class="card-title">Настройки</h5>
-                        <a href="{{ url_for('main.profile') }}" class="btn btn-primary mt-2">Управление</a>
-                    </div>
+            <div class="dashboard-stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Настройки</h3>
+                    <a href="{{ url_for('main.profile') }}" class="btn-modern btn-secondary-modern">Управление</a>
                 </div>
             </div>
         </div>
 
-        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 3rem; flex-wrap: wrap;">
+        <div class="dashboard-actions">
             <a href="{{ url_for('main.profile') }}" class="btn-modern btn-secondary-modern">
                 <i class="fas fa-user-cog"></i> Настройки профиля
             </a>
