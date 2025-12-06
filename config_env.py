@@ -160,8 +160,11 @@ def get_config(env = None) -> Config:
         экземпляр конфигурации
     """
     # If env is a Config class, return it directly
-    if env is not None and isinstance(env, type) and issubclass(env, Config):
-        return env
+    if env is not None and isinstance(env, type):
+        # Check if it's a subclass of any Config class
+        import config as config_module
+        if issubclass(env, (Config, config_module.Config)):
+            return env
     
     if env is None:
         env = os.environ.get('FLASK_ENV', 'development')
