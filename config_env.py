@@ -149,16 +149,20 @@ config = {
 }
 
 
-def get_config(env: str = None) -> Config:
+def get_config(env = None) -> Config:
     """
     Получить конфигурацию для окружения.
     
     Args:
-        env: окружение (development, testing, production, staging)
+        env: окружение (development, testing, production, staging) или класс конфигурации
     
     Returns:
         экземпляр конфигурации
     """
+    # If env is a Config class, return it directly
+    if env is not None and isinstance(env, type) and issubclass(env, Config):
+        return env
+    
     if env is None:
         env = os.environ.get('FLASK_ENV', 'development')
     
