@@ -4,7 +4,7 @@
 import pytest
 from app import create_app, db
 from models import User
-from config import Config
+from config_env import Config
 
 
 class TestConfig(Config):
