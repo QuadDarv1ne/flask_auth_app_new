@@ -11,9 +11,12 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-please-change-in-production'
     
     # Конфигурация базы данных
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///users.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///instance/app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False  # Установить True для отладки SQL запросов
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'connect_args': {'timeout': 30},
+    }
     
     # Flask-Login настройки
     REMEMBER_COOKIE_DURATION = 604800  # 7 дней в секундах
@@ -50,6 +53,16 @@ class Config:
     
     # Rate limiting configuration
     RATELIMIT_STORAGE_URL = os.environ.get('REDIS_URL') or 'memory://'
+    
+    # Redis configuration
+    REDIS_URL = os.environ.get('REDIS_URL') or 'redis://localhost:6379/0'
+    REDIS_SOCKET_CONNECT_TIMEOUT = 2
+    REDIS_SOCKET_TIMEOUT = 2
+    
+    # Cache configuration
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_URL = REDIS_URL
+    CACHE_DEFAULT_TIMEOUT = 300
     
     # Настройки кэширования статических файлов
     SEND_FILE_MAX_AGE_DEFAULT = 31536000  # 1 год для статических файлов

@@ -310,10 +310,23 @@ def create_app(config_name=None):
     # Создание таблиц базы данных
     with app.app_context():
         try:
+            # Ensure the instance directory exists
+            instance_dir = os.path.join(app.root_path, 'instance')
+            os.makedirs(instance_dir, exist_ok=True)
+            
             db.create_all()
             app_logger.info("✓ Database tables created")
         except Exception as e:
             app_logger.warning(f"Database initialization warning: {e}")
+            # Try to create database with a fallback approach
+            try:
+                # Fallback to in-memory database for development
+                if app.config.get('TESTING', False):
+                    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+                    db.create_all()
+                    app_logger.info("✓ Fallback database created in memory")
+            except Exception as fallback_e:
+                app_logger.error(f"Critical database initialization error: {fallback_e}")
     
     return app
 
