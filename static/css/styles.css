@@ -4547,6 +4547,11 @@ body.keyboard-open {
     border: 0;
 }
 
+/* Margin utilities */
+.mt-3 {
+    margin-top: 1rem;
+}
+
 /* Ultra-mobile devices (small screens) */
 @media (max-width: 360px) {
     body {

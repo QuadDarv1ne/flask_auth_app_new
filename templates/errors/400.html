@@ -13,9 +13,9 @@
     </div>
     
     <div class="container">
-        <div class="hero-content-modern" style="grid-template-columns: 1fr; text-align: center;">
+        <div class="hero-content-modern">
             <div class="hero-text">
-                <div class="hero-badge" style="background: #fee2e2; color: #dc2626;">
+                <div class="hero-badge error">
                     <i class="fas fa-exclamation-triangle"></i>
                     Ошибка 400
                 </div>
@@ -28,7 +28,7 @@
                     Сервер не может обработать ваш запрос из-за некорректного синтаксиса.
                 </p>
                 
-                <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+                <div class="button-group-center">
                     <a href="{{ url_for('main.index') }}" class="btn-modern btn-white-modern btn-large">
                         <i class="fas fa-home"></i>
                         На главную
@@ -62,7 +62,7 @@
                 <p class="feature-description-modern">
                     Попробуйте обновить страницу или повторить действие позже
                 </p>
-                <a href="javascript:location.reload()" class="btn-modern btn-secondary-modern" style="margin-top: 1rem;">
+                <a href="javascript:location.reload()" class="btn-modern btn-secondary-modern">
                     <i class="fas fa-sync-alt"></i> Обновить
                 </a>
             </div>
@@ -75,7 +75,7 @@
                 <p class="feature-description-modern">
                     Вернитесь на предыдущую страницу и попробуйте другое действие
                 </p>
-                <a href="javascript:history.back()" class="btn-modern btn-secondary-modern" style="margin-top: 1rem;">
+                <a href="javascript:history.back()" class="btn-modern btn-secondary-modern">
                     <i class="fas fa-arrow-left"></i> Назад
                 </a>
             </div>
@@ -88,7 +88,7 @@
                 <p class="feature-description-modern">
                     Если проблема повторяется, свяжитесь с нашей службой поддержки
                 </p>
-                <a href="{{ url_for('main.contact') }}" class="btn-modern btn-secondary-modern" style="margin-top: 1rem;">
+                <a href="{{ url_for('main.contact') }}" class="btn-modern btn-secondary-modern">
                     <i class="fas fa-envelope"></i> Поддержка
                 </a>
             </div>
