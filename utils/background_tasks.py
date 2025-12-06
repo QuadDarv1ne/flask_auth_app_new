@@ -30,17 +30,28 @@ class TaskPriority(Enum):
     CRITICAL = 4
 
 
-@dataclass
 class TaskConfig:
     """Конфигурация задачи"""
-    name: str
-    func: Callable
-    args: tuple = ()
-    kwargs: dict = None
-    priority: TaskPriority = TaskPriority.NORMAL
-    max_retries: int = 3
-    timeout: int = 300
-    expires_in: int = 3600
+    
+    def __init__(
+        self,
+        name: str,
+        func: Callable,
+        args: tuple = (),
+        kwargs: dict = None,
+        priority: TaskPriority = TaskPriority.NORMAL,
+        max_retries: int = 3,
+        timeout: int = 300,
+        expires_in: int = 3600
+    ):
+        self.name = name
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs or {}
+        self.priority = priority
+        self.max_retries = max_retries
+        self.timeout = timeout
+        self.expires_in = expires_in
 
 
 class TaskQueue:
