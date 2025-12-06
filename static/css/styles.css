@@ -4152,6 +4152,15 @@ body.keyboard-open {
         padding: 1.5rem;
     }
     
+    .button-group-center {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .button-group-center .btn-modern {
+        width: 100%;
+    }
+    
     .avatar-placeholder {
         width: 100px;
         height: 100px;
