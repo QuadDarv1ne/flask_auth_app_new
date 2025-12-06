@@ -14,7 +14,7 @@
         </div>
         
         <div class="container">
-            <div class="hero-content-modern" style="grid-template-columns: 1fr; text-align: center;">
+            <div class="hero-content-modern">
                 <div class="hero-text">
                     <div class="hero-badge">
                         <i class="fas fa-user-circle"></i>
@@ -214,7 +214,7 @@
                 <!-- 2FA Controls -->
                 <div class="form-group mt-3">
                     {% if user.is_2fa_enabled %}
-                        <form method="POST" action="{{ url_for('main.profile') }}" style="display: inline;">
+                        <form method="POST" action="{{ url_for('main.profile') }}" class="inline-form">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" name="disable_2fa" class="btn btn-danger btn-block" 
                                     onclick="return confirm('Вы уверены, что хотите отключить 2FA?')">
@@ -223,7 +223,7 @@
                             </button>
                         </form>
                     {% else %}
-                        <form method="POST" action="{{ url_for('main.profile') }}" style="display: inline;">
+                        <form method="POST" action="{{ url_for('main.profile') }}" class="inline-form">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             {{ twofa_form.hidden_tag() }}
                             <button type="submit" name="enable_2fa" class="btn btn-success btn-block">
@@ -236,7 +236,7 @@
             </div>
         </div>
 
-        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+        <div class="button-group-center">
             <a href="{{ url_for('main.dashboard') }}" class="btn-modern btn-secondary-modern">
                 <i class="fas fa-tachometer-alt"></i> В личный кабинет
             </a>

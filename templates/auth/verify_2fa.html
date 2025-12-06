@@ -13,8 +13,8 @@
     </div>
     
     <div class="container">
-        <div class="hero-content-modern" style="grid-template-columns: 1fr;">
-            <div class="hero-text" style="text-align: center;">
+        <div class="hero-content-modern">
+            <div class="hero-text">
                 <div class="hero-badge">
                     <i class="fas fa-shield-alt"></i>
                     Двухфакторная аутентификация
@@ -35,7 +35,7 @@
 
 <div class="features-modern">
     <div class="container">
-        <div class="auth-card" style="max-width: 500px; margin: 0 auto;">
+        <div class="auth-card">
             <form method="POST" action="{{ url_for('auth.verify_2fa') }}" class="auth-form">
                 {{ form.hidden_tag() }}
                 

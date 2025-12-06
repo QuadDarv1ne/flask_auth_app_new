@@ -1465,6 +1465,7 @@ body.dark-mode .form-validation-error {
     max-width: 500px;
     transition: all var(--transition-normal);
     border: none;
+    width: 100%;
 }
 
 .auth-card:hover {
@@ -1949,6 +1950,7 @@ body.dark-mode .stat-value {
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem;
+    grid-template-columns: 1fr;
 }
 
 .hero-badge {
@@ -1963,6 +1965,10 @@ body.dark-mode .stat-value {
     margin-bottom: 1.5rem;
     font-size: 0.9rem;
     font-weight: 500;
+}
+
+.hero-badge.error {
+    background: rgba(239, 68, 68, 0.2);
 }
 
 .gradient-text {
@@ -4071,6 +4077,7 @@ body.keyboard-open {
     box-shadow: var(--shadow-md);
     transition: all var(--transition-fast);
     text-align: center;
+    cursor: pointer;
 }
 
 .dashboard-stat-card:hover {
@@ -4123,6 +4130,18 @@ body.keyboard-open {
     justify-content: center;
     margin-top: 3rem;
     flex-wrap: wrap;
+}
+
+/* Centered button groups */
+.button-group-center {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.inline-form {
+    display: inline;
 }
 
 /* Responsive dashboard */

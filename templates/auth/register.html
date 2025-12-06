@@ -13,8 +13,8 @@
     </div>
     
     <div class="container">
-        <div class="hero-content-modern" style="grid-template-columns: 1fr;">
-            <div class="hero-text" style="text-align: center;">
+        <div class="hero-content-modern">
+            <div class="hero-text">
                 <div class="hero-badge">
                     <i class="fas fa-user-plus"></i>
                     Регистрация
@@ -35,7 +35,7 @@
 
 <div class="features-modern">
     <div class="container">
-        <div class="auth-card" style="max-width: 500px; margin: 0 auto;">
+        <div class="auth-card">
             <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form">
                 {{ form.hidden_tag() }}
                 
@@ -116,7 +116,7 @@
     </div>
 </div>
 
-<div class="stats-section" style="background: #f8fafc;">
+<div class="stats-section alternate">
     <div class="container">
         <div class="section-header">
             <div class="section-badge">ПРЕИМУЩЕСТВА</div>
