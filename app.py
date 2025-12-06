@@ -18,6 +18,11 @@ from utils.email_service import email_service
 from utils.websocket import socketio, ws_manager
 from utils.rate_limit import rate_limit
 from utils.security_utils import SecureHeaders
+from utils.cache_strategies import CacheWarmer, SmartCache
+from utils.cdn_optimization import CDNOptimizer, ContentCompression
+from utils.query_optimization import QueryOptimizer
+from utils.advanced_monitoring import PerformanceMetricsCollector, AlertSystem, DashboardData
+from utils.background_tasks import TaskQueue, TaskScheduler, CommonTasks, ScheduledTask
 
 # Инициализация расширений
 db = SQLAlchemy()
@@ -55,6 +60,31 @@ def create_app(config_name=None):
     rate_limit.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*", async_mode='threading')
     
+    # Инициализация продвинутых оптимизаций
+    smart_cache = SmartCache(cache)
+    cdn_optimizer = CDNOptimizer(app.config.get('CDN_URL', None))
+    advanced_metrics = PerformanceMetricsCollector()
+    alert_system = AlertSystem()
+    dashboard_data = DashboardData(advanced_metrics, alert_system)
+    
+    # Инициализация фоновых задач
+    task_queue = TaskQueue(db)
+    task_scheduler = TaskScheduler()
+    
+    # Инициализация Query Optimizer
+    query_optimizer = QueryOptimizer(db)
+    
+    # Инициализация Cache Warmer
+    cache_warmer = CacheWarmer(app, cache)
+    
+    # Регистрация планировщика задач
+    task_scheduler.register_scheduled_task(
+        ScheduledTask('cleanup_sessions', CommonTasks.cleanup_old_sessions, 'daily')
+    )
+    task_scheduler.register_scheduled_task(
+        ScheduledTask('backup_database', lambda: CommonTasks.backup_database(app.config['DATABASE_URL']), 'daily')
+    )
+    
     # Настройка логирования
     setup_logger(app)
     
@@ -63,8 +93,15 @@ def create_app(config_name=None):
     
     # Регистрация расширений в app.extensions
     app.extensions['cache'] = cache
+    app.extensions['smart_cache'] = smart_cache
     app.extensions['metrics_collector'] = metrics_collector
+    app.extensions['advanced_metrics'] = advanced_metrics
     app.extensions['ws_manager'] = ws_manager
+    app.extensions['task_queue'] = task_queue
+    app.extensions['query_optimizer'] = query_optimizer
+    app.extensions['cdn_optimizer'] = cdn_optimizer
+    app.extensions['alert_system'] = alert_system
+    app.extensions['dashboard_data'] = dashboard_data
     
     # Настройка Flask-Login
     login_manager.login_view = 'auth.login'
@@ -183,6 +220,51 @@ def create_app(config_name=None):
             'timestamp': time.time()
         }, 200
     
+    # Dashboard endpoint с продвинутыми метриками
+    @app.route('/dashboard')
+    def dashboard():
+        """Dashboard с продвинутыми метриками"""
+        from flask_login import login_required
+        
+        @login_required
+        def _dashboard():
+            dashboard_info = dashboard_data.get_dashboard_data()
+            return {
+                'success': True,
+                'data': dashboard_info
+            }, 200
+        
+        return _dashboard()
+    
+    # Advanced alerts endpoint
+    @app.route('/api/alerts')
+    def get_alerts():
+        """Получить активные алерты"""
+        return {
+            'alerts': alert_system.get_active_alerts(),
+            'count': len(alert_system.get_active_alerts()),
+            'timestamp': time.time()
+        }, 200
+    
+    # Query statistics endpoint
+    @app.route('/api/query-stats')
+    def query_stats():
+        """Получить статистику запросов к БД"""
+        from flask_login import login_required
+        
+        @login_required
+        def _stats():
+            stats = query_optimizer.stats.get_summary()
+            slow_queries = query_optimizer.stats.get_slow_queries(limit=10)
+            
+            return {
+                'summary': stats,
+                'slow_queries': slow_queries,
+                'timestamp': time.time()
+            }, 200
+        
+        return _stats()
+    
     # Обработчики ошибок (управляются error_handler.py)
     # Дополнительные обработчики для специфичных случаев
     
@@ -201,7 +283,7 @@ def create_app(config_name=None):
 if __name__ == '__main__':
     app = create_app()
     print("\n" + "="*60)
-    print("🚀 Flask Auth App запущен!")
+    print("🚀 Flask Auth App запущен")
     print("="*60)
     print("📍 Откройте браузер: http://localhost:5000")
     print("🔐 Зарегистрируйтесь или войдите в систему")

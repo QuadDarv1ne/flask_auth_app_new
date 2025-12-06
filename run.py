@@ -99,6 +99,97 @@ def show_metrics():
     print(f"Memory Usage: {system['memory']['percent']:.1f}%")
     print(f"Disk Usage: {system['disk'].get('percent', 0):.1f}%")
 
+@app.cli.command()
+def warm_cache():
+    """Предварительное заполнение кэша"""
+    from utils.cache_strategies import CacheWarmer
+    from utils.redis_cache import cache
+    
+    warmer = CacheWarmer(app, cache)
+    warmer.warm_cache()
+    print('✓ Cache warmed successfully')
+
+@app.cli.command()
+def analyze_queries():
+    """Анализировать медленные запросы"""
+    from utils.query_optimization import QueryOptimizer
+    
+    optimizer = app.extensions.get('query_optimizer')
+    if optimizer:
+        stats = optimizer.stats.get_summary()
+        slow_queries = optimizer.stats.get_slow_queries(limit=5)
+        
+        print('\n=== Query Statistics ===')
+        print(f"Total Queries: {stats.get('total_queries', 0)}")
+        print(f"Total Time: {stats.get('total_time', 0):.3f}s")
+        print(f"Average Time: {stats.get('avg_time', 0):.3f}s")
+        print(f"Slow Queries: {stats.get('slow_queries_count', 0)}")
+        
+        if slow_queries:
+            print('\n=== Top Slow Queries ===')
+            for i, query in enumerate(slow_queries, 1):
+                print(f"{i}. {query['duration']:.3f}s - {query['query'][:80]}")
+
+@app.cli.command()
+def setup_indexes():
+    """Создать индексы для оптимизации БД"""
+    from utils.query_optimization import QueryOptimizer
+    
+    optimizer = QueryOptimizer(db)
+    
+    # Создание индексов для таблицы users
+    optimizer.create_index('users', 'email', 'idx_users_email')
+    optimizer.create_index('users', 'username', 'idx_users_username')
+    optimizer.create_composite_index('users', ['is_admin', 'is_active'])
+    
+    # Анализ таблиц
+    optimizer.analyze_table('users')
+    
+    print('✓ Database indexes created and analyzed')
+
+@app.cli.command()
+def test_performance():
+    """Тестировать производительность"""
+    from utils.advanced_monitoring import LoadTesting
+    
+    print('Starting load test...')
+    
+    results = LoadTesting.simulate_traffic(
+        'http://localhost:5000/',
+        requests_count=50,
+        concurrent=5
+    )
+    
+    print('\n=== Load Test Results ===')
+    print(f"Total Requests: {results['total_requests']}")
+    print(f"Successful: {results['successful']}")
+    print(f"Failed: {results['failed']}")
+    print(f"Success Rate: {results.get('success_rate', 0):.2%}")
+    print(f"Average Time: {results.get('avg_time', 0):.3f}s")
+    print(f"Min Time: {results.get('min_time', 0):.3f}s")
+    print(f"Max Time: {results.get('max_time', 0):.3f}s")
+
+@app.cli.command()
+def capacity_planning():
+    """Планирование емкости на год"""
+    from utils.advanced_monitoring import CapacityPlanning
+    
+    predictions = CapacityPlanning.predict_resource_needs(
+        current_users=100,
+        growth_rate=0.10,  # 10% месячный рост
+        months=12
+    )
+    
+    print('\n=== Capacity Planning (12 months) ===')
+    print(f"Current Users: {predictions['current_users']}")
+    print(f"Growth Rate: {predictions['growth_rate']}")
+    print()
+    
+    for pred in predictions[::3]:  # Показываем каждый 3-й месяц
+        print(f"Month {pred['month']}: {pred['projected_users']} users")
+        print(f"  CPU Cores: {pred['cpu_cores']}, Memory: {pred['memory_mb']}MB, Storage: {pred['storage_gb']}GB")
+
+
 if __name__ == '__main__':
     # Запуск с SocketIO
     # В продакшене использовать gunicorn с eventlet worker
