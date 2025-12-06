@@ -28,3 +28,9 @@ flask-minify==0.41
 webassets==2.0
 jsmin==3.0.1
 cssmin==0.2.0
+
+# Дополнительные утилиты
+psutil==5.9.6
+bandit==1.7.5
+safety==2.3.5
+radon==6.0.1
