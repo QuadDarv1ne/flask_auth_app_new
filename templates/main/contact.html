@@ -88,7 +88,8 @@
                     <label for="name">
                         <i class="fas fa-user"></i> {{ form.name.label.text }}
                     </label>
-                    {{ form.name(class="form-control") }}
+                    {{ form.name(class="form-control", **{'aria-describedby': 'name-help'}) }}
+                    <div id="name-help" class="sr-only">Введите ваше имя</div>
                     {% if form.name.errors %}
                         <div class="form-errors">
                             {% for error in form.name.errors %}
@@ -102,7 +103,8 @@
                     <label for="email">
                         <i class="fas fa-envelope"></i> {{ form.email.label.text }}
                     </label>
-                    {{ form.email(class="form-control", type="email") }}
+                    {{ form.email(class="form-control", type="email", **{'aria-describedby': 'contact-email-help'}) }}
+                    <div id="contact-email-help" class="sr-only">Введите ваш email адрес</div>
                     {% if form.email.errors %}
                         <div class="form-errors">
                             {% for error in form.email.errors %}
@@ -116,7 +118,8 @@
                     <label for="subject">
                         <i class="fas fa-tag"></i> {{ form.subject.label.text }}
                     </label>
-                    {{ form.subject(class="form-control") }}
+                    {{ form.subject(class="form-control", **{'aria-describedby': 'subject-help'}) }}
+                    <div id="subject-help" class="sr-only">Введите тему сообщения</div>
                     {% if form.subject.errors %}
                         <div class="form-errors">
                             {% for error in form.subject.errors %}
@@ -130,7 +133,8 @@
                     <label for="message">
                         <i class="fas fa-comment"></i> {{ form.message.label.text }}
                     </label>
-                    {{ form.message(class="form-control", rows="6") }}
+                    {{ form.message(class="form-control", rows="6", **{'aria-describedby': 'message-help'}) }}
+                    <div id="message-help" class="sr-only">Введите ваше сообщение</div>
                     {% if form.message.errors %}
                         <div class="form-errors">
                             {% for error in form.message.errors %}

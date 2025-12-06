@@ -49,7 +49,8 @@
                         <label for="username">
                             <i class="fas fa-user"></i> {{ profile_form.username.label.text }}
                         </label>
-                        {{ profile_form.username(class="form-control", **{'data-tooltip': 'Уникальное имя пользователя для входа в систему', 'data-tooltip-position': 'top'}) }}
+                        {{ profile_form.username(class="form-control", **{'data-tooltip': 'Уникальное имя пользователя для входа в систему', 'data-tooltip-position': 'top', 'aria-describedby': 'username-help'}) }}
+                        <div id="username-help" class="sr-only">Уникальное имя пользователя для входа в систему</div>
                         {% if profile_form.username.errors %}
                             <div class="form-errors">
                                 {% for error in profile_form.username.errors %}
@@ -63,7 +64,8 @@
                         <label for="email">
                             <i class="fas fa-envelope"></i> {{ profile_form.email.label.text }}
                         </label>
-                        {{ profile_form.email(class="form-control", type="email", **{'data-tooltip': 'Ваш email будет использоваться для входа и восстановления пароля', 'data-tooltip-position': 'top'}) }}
+                        {{ profile_form.email(class="form-control", type="email", **{'data-tooltip': 'Ваш email будет использоваться для входа и восстановления пароля', 'data-tooltip-position': 'top', 'aria-describedby': 'email-help'}) }}
+                        <div id="email-help" class="sr-only">Ваш email будет использоваться для входа и восстановления пароля</div>
                         {% if profile_form.email.errors %}
                             <div class="form-errors">
                                 {% for error in profile_form.email.errors %}
@@ -77,7 +79,8 @@
                         <label for="avatar">
                             <i class="fas fa-image"></i> {{ profile_form.avatar.label.text }}
                         </label>
-                        {{ profile_form.avatar(class="form-control-file", **{'data-tooltip': 'Выберите изображение для вашего профиля. Поддерживаемые форматы: JPG, PNG, GIF', 'data-tooltip-position': 'bottom'}) }}
+                        {{ profile_form.avatar(class="form-control-file", **{'data-tooltip': 'Выберите изображение для вашего профиля. Поддерживаемые форматы: JPG, PNG, GIF', 'data-tooltip-position': 'bottom', 'aria-describedby': 'avatar-help'}) }}
+                        <div id="avatar-help" class="sr-only">Выберите изображение для вашего профиля. Поддерживаемые форматы: JPG, PNG, GIF</div>
                         <small class="form-text">Поддерживаемые форматы: JPG, PNG, GIF. Максимальный размер: 5MB</small>
                         {% if profile_form.avatar.errors %}
                             <div class="form-errors">
@@ -109,7 +112,8 @@
                         <label for="current_password">
                             <i class="fas fa-lock"></i> {{ password_form.current_password.label.text }}
                         </label>
-                        {{ password_form.current_password(class="form-control", **{'data-tooltip': 'Введите ваш текущий пароль для подтверждения изменений', 'data-tooltip-position': 'top'}) }}
+                        {{ password_form.current_password(class="form-control", **{'data-tooltip': 'Введите ваш текущий пароль для подтверждения изменений', 'data-tooltip-position': 'top', 'aria-describedby': 'current-password-help'}) }}
+                        <div id="current-password-help" class="sr-only">Введите ваш текущий пароль для подтверждения изменений</div>
                         {% if password_form.current_password.errors %}
                             <div class="form-errors">
                                 {% for error in password_form.current_password.errors %}
@@ -123,7 +127,8 @@
                         <label for="new_password">
                             <i class="fas fa-lock"></i> {{ password_form.new_password.label.text }}
                         </label>
-                        {{ password_form.new_password(class="form-control", id="new_password", **{'data-tooltip': 'Пароль должен содержать минимум 8 символов, включая заглавные и строчные буквы, цифры', 'data-tooltip-position': 'top'}) }}
+                        {{ password_form.new_password(class="form-control", id="new_password", **{'data-tooltip': 'Пароль должен содержать минимум 8 символов, включая заглавные и строчные буквы, цифры', 'data-tooltip-position': 'top', 'aria-describedby': 'new-password-help'}) }}
+                        <div id="new-password-help" class="sr-only">Пароль должен содержать минимум 8 символов, включая заглавные и строчные буквы, цифры</div>
                         <div class="password-strength-meter">
                             <div class="strength-bar">
                                 <div class="strength-fill" id="new-password-strength-fill"></div>
@@ -143,7 +148,8 @@
                         <label for="confirm_password">
                             <i class="fas fa-lock"></i> {{ password_form.confirm_password.label.text }}
                         </label>
-                        {{ password_form.confirm_password(class="form-control", **{'data-tooltip': 'Повторите новый пароль для подтверждения', 'data-tooltip-position': 'top'}) }}
+                        {{ password_form.confirm_password(class="form-control", **{'data-tooltip': 'Повторите новый пароль для подтверждения', 'data-tooltip-position': 'top', 'aria-describedby': 'confirm-password-help'}) }}
+                        <div id="confirm-password-help" class="sr-only">Повторите новый пароль для подтверждения</div>
                         {% if password_form.confirm_password.errors %}
                             <div class="form-errors">
                                 {% for error in password_form.confirm_password.errors %}

@@ -63,6 +63,7 @@
     <link rel="preload" href="{{ url_for('static', filename='js/main.js') }}" as="script">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Перейти к основному содержимому</a>
     <!-- Навигация -->
     <nav class="navbar navbar-expand-lg" role="navigation" aria-label="Основная навигация">
         <div class="container">
@@ -143,7 +144,7 @@
     {% endwith %}
 
     <!-- Основной контент -->
-    <main class="main-content" role="main">
+    <main class="main-content" role="main" id="main-content">
         {% block content %}{% endblock %}
     </main>
 
